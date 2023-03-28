@@ -34,27 +34,6 @@ valgrind: all
 	valgrind --leak-check=full --track-fds=yes --show-leak-kinds=all ./${NAME}
 
 
-NOCOLOR='\033[0m'
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-ORANGE='\033[0;33m'
-BLUE='\033[0;34m'
-PURPLE='\033[0;35m'
-CYAN='\033[0;36m'
-LIGHTGRAY='\033[0;37m'
-
-DARKGRAY='\033[1;30m'
-LIGHTRED='\033[1;31m'
-LIGHTGREEN='\033[1;32m'
-LIGHTBLUE='\033[1;34m'
-LIGHTPURPLE='\033[1;35m'
-LIGHTCYAN='\033[1;36m'
-YELLOW='\033[1;33m'
-WHITE='\033[1;37m'
-
-
-
-
 ${OBJS}: ${OBJS_PATH}/%.o: %.c Makefile philo.h
 	@	mkdir -p ${OBJS_PATH}
 	@	$(COLORCOMPIL)
@@ -63,9 +42,6 @@ ${OBJS}: ${OBJS_PATH}/%.o: %.c Makefile philo.h
 ${NAME}:  ${OBJS}
 	@	${CC} ${CFLAGS} -o ${NAME} ${OBJS} ${LIB} ${HEAD_PATH}
 	@	echo -ne "\r\033[2K" $(LIGHTGREEN) "\t$(NAME) OK" "\033[0m" "\n"
-
-
-
 
 
 clean:

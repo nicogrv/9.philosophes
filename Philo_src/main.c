@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/28 16:18:24 by ngriveau          #+#    #+#             */
-/*   Updated: 2023/03/28 17:35:25 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/03/28 18:50:48 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,22 +46,86 @@ void *ft_philo(void *av)
 	}
     return NULL;
 }
+
+
+void ft_create_fork(t_philo *philo)
+{
+	int i;
+
+	philo->av.fork = malloc(sizeof(int) * philo->av.nbr_philo + 1);
+	philo->av.fork[philo->av.nbr_philo] = -42;
+	i = -1;
+	while(philo->av.fork[++i] != -42)
+		philo->av.fork[i] = i;
+	return ;
+}
+
+
+void ft_create_philo(t_philo *philo)
+{
+	int i;
+	t_human *tmp;
+
+	i = 1;
+	tmp = &philo->human;
+	while (i <= philo->av.nbr_philo)
+	{
+		tmp->next = malloc(sizeof(t_human));
+		if (tmp->next == NULL)
+			return ;
+		tmp = tmp->next;
+		tmp->nb = i;
+		tmp->status = THINK;
+		tmp->timing = philo->tv.tv_usec;
+		tmp->leftfork = philo->av.fork[i - 1];
+		if (i == philo->av.nbr_philo)
+			tmp->rightfork = philo->av.fork[0];
+		else
+			tmp->rightfork = philo->av.fork[i];
+		tmp->next = NULL;
+		i++;
+	}
+}
+
+
+void ft_init(t_philo *philo)
+{
+	gettimeofday(&philo->tv, &philo->tz);
+	philo->av.nbr_philo = 4;
+	philo->av.die = 0;
+	philo->av.eat = 0;
+	philo->av.sleep = 0;
+	philo->human.nb = -42;
+	philo->human.status = -42;
+	philo->human.timing = -42;
+	philo->human.leftfork = -42;
+	philo->human.rightfork = -42;
+	ft_create_fork(philo);
+	ft_create_philo(philo);
+}
 int main(int c, char **av)
 {
 	t_philo philo;
-	pthread_t my_thread;
-	pthread_t my_thread2;
+	// pthread_t my_thread;
+	// pthread_t my_thread2;
+	t_human *tmp;
     
 	(void) c;
     (void) av;
-	
-	philo.value = 0;
-	gettimeofday(&philo.tv, &philo.tz);
-	pthread_create(&my_thread, NULL, ft_philo, &philo);
-	pthread_create(&my_thread2, NULL, ft_philo, &philo);
-	pthread_join(my_thread, NULL);
-	pthread_join(my_thread2, NULL);
-	fprintf(stderr, "value = %d\n", philo.value);
+	ft_init(&philo);
+
+	tmp = &philo.human;
+	while (tmp)
+	{
+		fprintf(stderr, "philo %d\tforkLeft = %d\tforkRight = %d\n", tmp->nb, tmp->leftfork, tmp->rightfork);
+		tmp = tmp->next;
+	}
+
+	// pthread_create(&my_thread, NULL, ft_philo, &philo);
+	// pthread_create(&my_thread2, NULL, ft_philo, &philo);
+	// pthread_join(my_thread, NULL);
+	// pthread_join(my_thread2, NULL);
+	// fprintf(stderr, "value = %d\n", philo.value);
     return(0);
 }
 	
