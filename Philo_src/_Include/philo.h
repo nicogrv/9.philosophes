@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 16:05:10 by pbizien           #+#    #+#             */
-/*   Updated: 2023/03/28 18:46:21 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/03/28 19:30:14 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,8 +58,7 @@ typedef struct s_philo
 	t_human			human;
 	struct timeval	tv;
     struct timezone	tz;
-	int				value;
-	int				start;
+	int				tmpid;
 	pthread_mutex_t mutex;
 }				t_philo;
 
