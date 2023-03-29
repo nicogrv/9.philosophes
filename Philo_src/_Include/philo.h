@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 16:05:10 by pbizien           #+#    #+#             */
-/*   Updated: 2023/03/29 15:22:26 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/03/29 18:13:34 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,7 @@ typedef struct s_init
 	int				eat;
 	int				sleep;
 	int				*fork;
+	long			time;
 	pthread_mutex_t *mutex;
 }				t_init;
 

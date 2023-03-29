@@ -1,0 +1,5 @@
+./Philo_src/main.c:73:12: error: no member named 'start' in 'struct s_init'
+        philo->av.start = philo->tv.tv_usec/1000 + philo->tv.tv_sec*1000;
+        ~~~~~~~~~ ^
+1 error generated.
+make: *** [Makefile:40: Philo_src/_Objet/main.o] Error 1
