@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/28 16:18:24 by ngriveau          #+#    #+#             */
-/*   Updated: 2023/03/28 19:30:19 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/03/29 13:59:33 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,15 @@ void ft_create_fork(t_philo *philo)
 {
 	int i;
 
-
-	philo->av.fork = malloc(sizeof(int) * philo->av.nbr_philo + 1);
+	philo->av.mutex = malloc(sizeof(pthread_mutex_t) * philo->av.nbr_philo);
+	philo->av.fork = malloc(sizeof(int) * (philo->av.nbr_philo + 1));
 	philo->av.fork[philo->av.nbr_philo] = -42;
 	i = -1;
-	while(philo->av.fork[++i] != -42)
+	while(++i < philo->av.nbr_philo)
+	{
+		pthread_mutex_init(&philo->av.mutex[i], NULL);
 		philo->av.fork[i] = 0;
+	}
 	return ;
 }
 
@@ -47,10 +50,17 @@ void ft_create_philo(t_philo *philo)
 		tmp->status = THINK;
 		tmp->timing = philo->tv.tv_usec;
 		tmp->leftfork = philo->av.fork[i - 1];
+		tmp->leftmutex = &philo->av.mutex[i - 1];
 		if (i == philo->av.nbr_philo)
+		{
 			tmp->rightfork = philo->av.fork[0];
+			tmp->rightmutex = &philo->av.mutex[0];	
+		}
 		else
+		{
 			tmp->rightfork = philo->av.fork[i];
+			tmp->rightmutex = &philo->av.mutex[i];
+		}
 		tmp->next = NULL;
 		i++;
 	}
@@ -78,10 +88,13 @@ void ft_print_info(t_human *human)
 {
 	if (human->status == EAT)
 		printf("\e[33mPhilo n'%d eat\e[0m\n", human->nb);
-	if (human->status == SLEEP)
+	else if (human->status == SLEEP)
 		printf("\e[35mPhilo n'%d sleep\e[0m\n", human->nb);
-	if (human->status == THINK)
+	else if (human->status == THINK)
 		printf("\e[36mPhilo n'%d think\e[0m\n", human->nb);
+	else 
+		printf("\e[36mPhilo n'%d ERROR\e[0m\n", human->nb);
+	
 
 }
 
@@ -107,7 +120,23 @@ void *ft_philo(void *av)
 		human = human->next;
 		id--;
 	}
-	// fprintf(stderr, "philo %d\tforkLeft = %d\tforkRight = %d\n", human->nb, human->leftfork, human->rightfork);
+	pthread_mutex_lock(human->leftmutex);
+	pthread_mutex_lock(human->rightmutex);
+	// fprintf(stderr, "if %d\tforkLeft = %d\tforkRight = %d\n", human->nb, human->leftfork, human->rightfork);
+	if (human->leftfork == 0 && human->rightfork == 0)
+	{
+		// fprintf(stderr, "if %d\tforkLeft = %d\tforkRight = %d\n", human->nb, human->leftfork, human->rightfork);
+		human->leftfork = human->nb;
+		human->rightfork = human->nb;
+	pthread_mutex_unlock(human->leftmutex);
+	pthread_mutex_unlock(human->rightmutex);
+	if (human->nb == human->leftfork && human->nb == human->rightfork)
+		human->status = EAT;
+		// human->leftfork = 0;
+		// human->rightfork = 0;
+	}
+	// fprintf(stderr, "philo %d\tforkLeft = %p\tforkRight = %p\n", human->nb, human->leftmutex, human->rightmutex);
+	// fprintf(stderr, "philo 1\tforkLeft = %d\tforkRight = %d\n", philo->human.next->leftfork, philo->human.next->rightfork);
 	ft_print_info(human);
 	
 	
@@ -139,6 +168,7 @@ int main(int c, char **av)
 	pthread_t idthread[4];
 	t_human *tmp;
 	int i;
+	int f;
     
 	(void) c;
     (void) av;
@@ -152,10 +182,16 @@ int main(int c, char **av)
 		pthread_create(&idthread[i], NULL, ft_philo, &philo);
 		while (0 <= philo.tmpid)
 			(void) i;
+		for (f = 0; f < 300000000; f++)
+			(void) f;
+		fprintf(stderr, "main %d\tforkLeft = %d\tforkRight = %d\n", tmp->nb, tmp->leftfork, tmp->rightfork);
+		
 		tmp = tmp->next;
+		fprintf(stderr, "main %d\tforkLeft = %d\tforkRight = %d\n", tmp->nb, tmp->leftfork, tmp->rightfork);
 		i++;
 	}
-
+	while (1)
+		(void) c;
 	// pthread_join(my_thread, NULL);
 	// pthread_join(my_thread2, NULL);
 	// fprintf(stderr, "value = %d\n", philo.value);

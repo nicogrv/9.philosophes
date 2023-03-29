@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 16:05:10 by pbizien           #+#    #+#             */
-/*   Updated: 2023/03/28 19:30:14 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/03/29 13:59:27 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,17 +39,20 @@ typedef struct s_human
 	int				status;
 	int				timing;
 	int				leftfork;
+	pthread_mutex_t	*leftmutex;
 	int				rightfork;
+	pthread_mutex_t	*rightmutex;
 	struct s_human	*next;
 }				t_human;
 
 typedef struct s_init
 {
-	int		nbr_philo;
-	int		die;
-	int		eat;
-	int		sleep;
-	int		*fork;
+	int				nbr_philo;
+	int				die;
+	int				eat;
+	int				sleep;
+	int				*fork;
+	pthread_mutex_t *mutex;
 }				t_init;
 
 typedef struct s_philo
