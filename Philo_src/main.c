@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/28 16:18:24 by ngriveau          #+#    #+#             */
-/*   Updated: 2023/03/29 13:59:33 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/03/29 15:08:54 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,16 +49,16 @@ void ft_create_philo(t_philo *philo)
 		tmp->nb = i;
 		tmp->status = THINK;
 		tmp->timing = philo->tv.tv_usec;
-		tmp->leftfork = philo->av.fork[i - 1];
+		tmp->leftfork = &philo->av.fork[i - 1];
 		tmp->leftmutex = &philo->av.mutex[i - 1];
 		if (i == philo->av.nbr_philo)
 		{
-			tmp->rightfork = philo->av.fork[0];
+			tmp->rightfork = &philo->av.fork[0];
 			tmp->rightmutex = &philo->av.mutex[0];	
 		}
 		else
 		{
-			tmp->rightfork = philo->av.fork[i];
+			tmp->rightfork = &philo->av.fork[i];
 			tmp->rightmutex = &philo->av.mutex[i];
 		}
 		tmp->next = NULL;
@@ -74,11 +74,11 @@ void ft_init(t_philo *philo)
 	philo->av.die = 0;
 	philo->av.eat = 0;
 	philo->av.sleep = 0;
-	philo->human.nb = -42;
-	philo->human.status = -42;
-	philo->human.timing = -42;
-	philo->human.leftfork = -42;
-	philo->human.rightfork = -42;
+	// philo->human.nb = -42;
+	// philo->human.status = -42;
+	// philo->human.timing = -42;
+	// philo->human.leftfork = -42;
+	// philo->human.rightfork = -42;
 	ft_create_fork(philo);
 	ft_create_philo(philo);
 }
@@ -120,23 +120,20 @@ void *ft_philo(void *av)
 		human = human->next;
 		id--;
 	}
+	// fprintf(stderr, "if %d\tforkLeft = %d\tforkRight = %d\n", human->nb, *human->leftfork, *human->rightfork);
 	pthread_mutex_lock(human->leftmutex);
 	pthread_mutex_lock(human->rightmutex);
-	// fprintf(stderr, "if %d\tforkLeft = %d\tforkRight = %d\n", human->nb, human->leftfork, human->rightfork);
-	if (human->leftfork == 0 && human->rightfork == 0)
+	if (*human->leftfork == 0 && *human->rightfork == 0)
 	{
-		// fprintf(stderr, "if %d\tforkLeft = %d\tforkRight = %d\n", human->nb, human->leftfork, human->rightfork);
-		human->leftfork = human->nb;
-		human->rightfork = human->nb;
+		// fprintf(stderr, "dans le if\n\n");
+		*human->leftfork = human->nb;
+		*human->rightfork = human->nb;
+		if (human->nb == *human->leftfork && human->nb == *human->rightfork)
+			human->status = EAT;
+	}
 	pthread_mutex_unlock(human->leftmutex);
 	pthread_mutex_unlock(human->rightmutex);
-	if (human->nb == human->leftfork && human->nb == human->rightfork)
-		human->status = EAT;
-		// human->leftfork = 0;
-		// human->rightfork = 0;
-	}
-	// fprintf(stderr, "philo %d\tforkLeft = %p\tforkRight = %p\n", human->nb, human->leftmutex, human->rightmutex);
-	// fprintf(stderr, "philo 1\tforkLeft = %d\tforkRight = %d\n", philo->human.next->leftfork, philo->human.next->rightfork);
+	// fprintf(stderr, "unlock %d\n", human->nb);
 	ft_print_info(human);
 	
 	
@@ -168,7 +165,7 @@ int main(int c, char **av)
 	pthread_t idthread[4];
 	t_human *tmp;
 	int i;
-	int f;
+	// int f;
     
 	(void) c;
     (void) av;
@@ -176,18 +173,18 @@ int main(int c, char **av)
 
 	tmp = philo.human.next;
 	i = 0;
+	// fprintf(stderr, "main %d\tforkLeft = %d\tforkRight = %d\n", tmp->nb, *tmp->leftfork, *tmp->rightfork);
 	while (tmp)
 	{
 		philo.tmpid = i;
 		pthread_create(&idthread[i], NULL, ft_philo, &philo);
 		while (0 <= philo.tmpid)
 			(void) i;
-		for (f = 0; f < 300000000; f++)
-			(void) f;
-		fprintf(stderr, "main %d\tforkLeft = %d\tforkRight = %d\n", tmp->nb, tmp->leftfork, tmp->rightfork);
+		// for (f = 0; f < 300000000; f++)
+			// (void) f;
 		
 		tmp = tmp->next;
-		fprintf(stderr, "main %d\tforkLeft = %d\tforkRight = %d\n", tmp->nb, tmp->leftfork, tmp->rightfork);
+		// fprintf(stderr, "main %d\tforkLeft = %d\tforkRight = %d\n", tmp->nb, *tmp->leftfork, *tmp->rightfork);
 		i++;
 	}
 	while (1)
