@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/28 16:18:24 by ngriveau          #+#    #+#             */
-/*   Updated: 2023/03/29 18:29:55 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/03/29 19:47:06 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,10 +71,10 @@ void ft_init(t_philo *philo)
 {
 	gettimeofday(&philo->tv, NULL);
 	philo->av.time = philo->tv.tv_usec/1000 + philo->tv.tv_sec*1000;
-	philo->av.nbr_philo = 10;
-	philo->av.die = 0;
+	philo->av.nbr_philo = 40;
+	philo->av.die = 100;
 	philo->av.eat = 500;
-	philo->av.sleep = 962;
+	philo->av.sleep = 300;
 	philo->human.nb = -42;
 	philo->human.status = -42;
 	philo->human.timing = -42;
@@ -121,6 +121,40 @@ void ft_print_take_fork(t_philo *philo, t_human *human, int side)
 }
 
 
+void ft_lock_mutex_id(t_philo *philo, t_human *human)
+{
+	if (human->nb % 2 == 0)
+	{
+		pthread_mutex_lock(human->leftmutex);
+		ft_print_take_fork(philo, human, 0);
+		pthread_mutex_lock(human->rightmutex);
+		ft_print_take_fork(philo, human, 1);
+	}
+	else
+	{
+		pthread_mutex_lock(human->rightmutex);
+		ft_print_take_fork(philo, human, 1);
+		pthread_mutex_lock(human->leftmutex);
+		ft_print_take_fork(philo, human, 0);
+	}
+	return ;
+}
+
+void ft_unlock_mutex_id(t_human *human)
+{
+	if (human->nb % 2 == 0)
+	{
+		pthread_mutex_unlock(human->leftmutex);
+		pthread_mutex_unlock(human->rightmutex);
+	}
+	else
+	{
+		pthread_mutex_unlock(human->rightmutex);
+		pthread_mutex_unlock(human->leftmutex);
+	}
+	return ;
+}
+
 
 void *ft_philo(void *av)
 {
@@ -137,55 +171,40 @@ void *ft_philo(void *av)
 		human = human->next;
 		id--;
 	}
+	human->timing = ft_get_time();
 	while (1)
 	{
-		if (human->nb % 2 == 0)
-		{
-			pthread_mutex_lock(human->leftmutex);
-			ft_print_take_fork(philo, human, 0);
-			pthread_mutex_lock(human->rightmutex);
-			ft_print_take_fork(philo, human, 1);
-		}
-		else
-		{
-			pthread_mutex_lock(human->rightmutex);
-			ft_print_take_fork(philo, human, 1);
-			pthread_mutex_lock(human->leftmutex);
-			ft_print_take_fork(philo, human, 0);
-		}
+		ft_lock_mutex_id(philo, human);
 		if (*human->leftfork == 0 && *human->rightfork == 0)
 		{
-			// fprintf(stderr, "dans le if\n\n");
-			
+			// printf("time die %ld >= %d\n\n", ft_get_time() - human->timing, philo->av.die);
+			if ((ft_get_time() - human->timing) >= philo->av.die)
+			{
+				ft_unlock_mutex_id(human);
+				printf("\e[31;1m%ld\t%d died\e[0m\n", ft_get_time() - philo->av.time, human->nb);
+				return NULL;
+			}
+			// if (((human->timing + philo->av.die) - (ft_get_time() + philo->av.eat)))
 			*human->leftfork = human->nb;
 			*human->rightfork = human->nb;
 			if (human->nb == *human->leftfork && human->nb == *human->rightfork)
 			{
 				human->status = EAT;
 				ft_print_info(philo, human);
-				usleep(philo->av.eat);
+				usleep(philo->av.eat*1000);
 				gettimeofday(&philo->tv, NULL);
-				human->timing = philo->tv.tv_usec/1000 + philo->tv.tv_sec*1000;
+				human->timing = ft_get_time();
 				*human->leftfork = 0;
 				*human->rightfork = 0;
 			}
 		}
-		if (human->nb % 2 == 0)
-		{
-			pthread_mutex_unlock(human->leftmutex);
-			pthread_mutex_unlock(human->rightmutex);
-		}
-		else
-		{
-			pthread_mutex_unlock(human->rightmutex);
-			pthread_mutex_unlock(human->leftmutex);
-		}
+		ft_unlock_mutex_id(human);
 		human->status = SLEEP;
 		ft_print_info(philo, human);
-		usleep(philo->av.sleep);
+		usleep(philo->av.sleep*1000);
 		human->status = THINK;
 		ft_print_info(philo, human);
-		usleep(philo->av.sleep);
+		usleep(philo->av.sleep*1000);
 	}
     return NULL;
 }
