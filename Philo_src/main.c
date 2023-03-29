@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/28 16:18:24 by ngriveau          #+#    #+#             */
-/*   Updated: 2023/03/29 15:08:54 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/03/29 16:22:01 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,31 +69,32 @@ void ft_create_philo(t_philo *philo)
 
 void ft_init(t_philo *philo)
 {
-	gettimeofday(&philo->tv, &philo->tz);
-	philo->av.nbr_philo = 4;
+	gettimeofday(&philo->tv, NULL);
+	philo->av.nbr_philo = 10;
 	philo->av.die = 0;
-	philo->av.eat = 0;
-	philo->av.sleep = 0;
-	// philo->human.nb = -42;
-	// philo->human.status = -42;
-	// philo->human.timing = -42;
-	// philo->human.leftfork = -42;
-	// philo->human.rightfork = -42;
+	philo->av.eat = 500;
+	philo->av.sleep = 962;
+	philo->human.nb = -42;
+	philo->human.status = -42;
+	philo->human.timing = -42;
+	philo->human.leftfork = NULL;
+	philo->human.rightfork = NULL;
 	ft_create_fork(philo);
 	ft_create_philo(philo);
 }
 
 
-void ft_print_info(t_human *human)
+void ft_print_info(t_philo *philo, t_human *human)
 {
+	gettimeofday(&philo->tv, NULL);
 	if (human->status == EAT)
-		printf("\e[33mPhilo n'%d eat\e[0m\n", human->nb);
+		printf("\e[33m%ld\t%d eating\e[0m\n", philo->tv.tv_usec/1000, human->nb);
 	else if (human->status == SLEEP)
-		printf("\e[35mPhilo n'%d sleep\e[0m\n", human->nb);
+		printf("\e[35m%ld\t%d sleeping\e[0m\n", philo->tv.tv_usec/1000, human->nb);
 	else if (human->status == THINK)
-		printf("\e[36mPhilo n'%d think\e[0m\n", human->nb);
+		printf("\e[36m%ld\t%d thinking\e[0m\n", philo->tv.tv_usec/1000, human->nb);
 	else 
-		printf("\e[36mPhilo n'%d ERROR\e[0m\n", human->nb);
+		printf("\e[31m%ld\t%d ERROR\e[0m\n", philo->tv.tv_usec/1000, human->nb);
 	
 
 }
@@ -101,9 +102,22 @@ void ft_print_info(t_human *human)
 
 void ft_print_time(t_philo *philo, char *text)
 {
-	gettimeofday(&philo->tv, &philo->tz);
+	gettimeofday(&philo->tv, NULL);
     printf(".%s\t%ld \n", text, philo->tv.tv_usec);
 }
+void ft_print_take_fork(t_philo *philo, t_human *human, int side)
+{
+	gettimeofday(&philo->tv, NULL);
+	if (side == 0)
+		printf("\e[34m%ld\t%d take LeftFork\e[0m\n", philo->tv.tv_usec/1000, human->nb);
+	else if (side == 1)
+		printf("\e[34m%ld\t%d take RightFork\e[0m\n", philo->tv.tv_usec/1000, human->nb);
+	else
+		printf("\e[31m%ld\t%d ERROR side\e[0m\n", philo->tv.tv_usec/1000, human->nb);
+		
+}
+
+
 
 void *ft_philo(void *av)
 {
@@ -121,20 +135,58 @@ void *ft_philo(void *av)
 		id--;
 	}
 	// fprintf(stderr, "if %d\tforkLeft = %d\tforkRight = %d\n", human->nb, *human->leftfork, *human->rightfork);
-	pthread_mutex_lock(human->leftmutex);
-	pthread_mutex_lock(human->rightmutex);
-	if (*human->leftfork == 0 && *human->rightfork == 0)
+	while (1)
 	{
-		// fprintf(stderr, "dans le if\n\n");
-		*human->leftfork = human->nb;
-		*human->rightfork = human->nb;
-		if (human->nb == *human->leftfork && human->nb == *human->rightfork)
-			human->status = EAT;
+		if (human->nb % 2 == 0)
+		{
+			pthread_mutex_lock(human->leftmutex);
+			ft_print_take_fork(philo, human, 0);
+			pthread_mutex_lock(human->rightmutex);
+			ft_print_take_fork(philo, human, 1);
+		}
+		else
+		{
+			pthread_mutex_lock(human->rightmutex);
+			ft_print_take_fork(philo, human, 1);
+			pthread_mutex_lock(human->leftmutex);
+			ft_print_take_fork(philo, human, 0);
+		}
+		if (*human->leftfork == 0 && *human->rightfork == 0)
+		{
+			// fprintf(stderr, "dans le if\n\n");
+			*human->leftfork = human->nb;
+			*human->rightfork = human->nb;
+			if (human->nb == *human->leftfork && human->nb == *human->rightfork)
+			{
+				human->status = EAT;
+				ft_print_info(philo, human);
+				gettimeofday(&philo->tv, NULL);
+				human->timing = philo->tv.tv_usec;
+				usleep(philo->av.eat);
+				*human->leftfork = 0;
+				*human->rightfork = 0;
+			}
+		}
+		if (human->nb % 2 == 0)
+		{
+			pthread_mutex_unlock(human->leftmutex);
+			pthread_mutex_unlock(human->rightmutex);
+		}
+		else
+		{
+			pthread_mutex_unlock(human->rightmutex);
+			pthread_mutex_unlock(human->leftmutex);
+		}
+		gettimeofday(&philo->tv, NULL);
+		human->status = SLEEP;
+		ft_print_info(philo, human);
+		usleep(philo->av.sleep);
+		gettimeofday(&philo->tv, NULL);
+		human->status = THINK;
+		ft_print_info(philo, human);
+		usleep(philo->av.sleep);
 	}
-	pthread_mutex_unlock(human->leftmutex);
-	pthread_mutex_unlock(human->rightmutex);
 	// fprintf(stderr, "unlock %d\n", human->nb);
-	ft_print_info(human);
 	
 	
 	// gettimeofday(&philo->tv, &philo->tz);
@@ -161,11 +213,10 @@ void *ft_philo(void *av)
 
 int main(int c, char **av)
 {
-	t_philo philo;
-	pthread_t idthread[4];
-	t_human *tmp;
-	int i;
-	// int f;
+	t_philo		philo;
+	pthread_t	*idthread;
+	t_human		*tmp;
+	int			i;
     
 	(void) c;
     (void) av;
@@ -173,18 +224,15 @@ int main(int c, char **av)
 
 	tmp = philo.human.next;
 	i = 0;
-	// fprintf(stderr, "main %d\tforkLeft = %d\tforkRight = %d\n", tmp->nb, *tmp->leftfork, *tmp->rightfork);
+	idthread = malloc(sizeof(pthread_t) * philo.av.nbr_philo);
 	while (tmp)
 	{
 		philo.tmpid = i;
 		pthread_create(&idthread[i], NULL, ft_philo, &philo);
 		while (0 <= philo.tmpid)
 			(void) i;
-		// for (f = 0; f < 300000000; f++)
-			// (void) f;
-		
+		usleep(100);
 		tmp = tmp->next;
-		// fprintf(stderr, "main %d\tforkLeft = %d\tforkRight = %d\n", tmp->nb, *tmp->leftfork, *tmp->rightfork);
 		i++;
 	}
 	while (1)
@@ -192,7 +240,6 @@ int main(int c, char **av)
 	// pthread_join(my_thread, NULL);
 	// pthread_join(my_thread2, NULL);
 	// fprintf(stderr, "value = %d\n", philo.value);
-
     return(0);
 }
 	
