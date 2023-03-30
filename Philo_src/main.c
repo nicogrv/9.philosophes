@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/28 16:18:24 by ngriveau          #+#    #+#             */
-/*   Updated: 2023/03/29 19:47:06 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/03/30 12:12:23 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,9 +71,9 @@ void ft_init(t_philo *philo)
 {
 	gettimeofday(&philo->tv, NULL);
 	philo->av.time = philo->tv.tv_usec/1000 + philo->tv.tv_sec*1000;
-	philo->av.nbr_philo = 40;
-	philo->av.die = 100;
-	philo->av.eat = 500;
+	philo->av.nbr_philo = 4;
+	philo->av.die = 800;
+	philo->av.eat = 300;
 	philo->av.sleep = 300;
 	philo->human.nb = -42;
 	philo->human.status = -42;
@@ -96,11 +96,11 @@ void ft_print_info(t_philo *philo, t_human *human)
 {
 	gettimeofday(&philo->tv, NULL);
 	if (human->status == EAT)
-		printf("\e[33;1m%ld\t%d eating\e[0m\n",ft_get_time() - philo->av.time, human->nb);
+		printf("\e[33;1m%ld\t%d is eating\e[0m\n",ft_get_time() - philo->av.time, human->nb);
 	else if (human->status == SLEEP)
-		printf("\e[35;1m%ld\t%d sleeping\e[0m\n",ft_get_time() - philo->av.time, human->nb);
+		printf("\e[35;1m%ld\t%d is sleeping\e[0m\n",ft_get_time() - philo->av.time, human->nb);
 	else if (human->status == THINK)
-		printf("\e[32;1m%ld\t%d thinking\e[0m\n",ft_get_time() - philo->av.time, human->nb);
+		printf("\e[32;1m%ld\t%d is thinking\e[0m\n",ft_get_time() - philo->av.time, human->nb);
 	else 
 		printf("\e[31;1m%ld\t%d ERROR\e[0m\n",ft_get_time() - philo->av.time, human->nb);
 	
@@ -112,11 +112,11 @@ void ft_print_take_fork(t_philo *philo, t_human *human, int side)
 {
 	gettimeofday(&philo->tv, NULL);
 	if (side == 0)
-		printf("\e[34;1m%ld\t%d take LeftFork\e[0m\n", ft_get_time() - philo->av.time, human->nb);
+		printf("\e[34;1m%ld\t%d has taken a fork\e[0m\n", ft_get_time() - philo->av.time, human->nb);
 	else if (side == 1)
-		printf("\e[34;1m%ld\t%d take RightFork\e[0m\n", ft_get_time() - philo->av.time, human->nb);
+		printf("\e[34;1m%ld\t%d has taken a fork\e[0m\n", ft_get_time() - philo->av.time, human->nb);
 	else
-		printf("\e[31;1m%ld\t%d ERROR side\e[0m\n", ft_get_time() - philo->av.time, human->nb);
+		printf("\e[31;1m%ld\t%d has taken a fork\e[0m\n", ft_get_time() - philo->av.time, human->nb);
 		
 }
 
@@ -177,14 +177,12 @@ void *ft_philo(void *av)
 		ft_lock_mutex_id(philo, human);
 		if (*human->leftfork == 0 && *human->rightfork == 0)
 		{
-			// printf("time die %ld >= %d\n\n", ft_get_time() - human->timing, philo->av.die);
 			if ((ft_get_time() - human->timing) >= philo->av.die)
 			{
 				ft_unlock_mutex_id(human);
 				printf("\e[31;1m%ld\t%d died\e[0m\n", ft_get_time() - philo->av.time, human->nb);
 				return NULL;
 			}
-			// if (((human->timing + philo->av.die) - (ft_get_time() + philo->av.eat)))
 			*human->leftfork = human->nb;
 			*human->rightfork = human->nb;
 			if (human->nb == *human->leftfork && human->nb == *human->rightfork)
@@ -219,7 +217,6 @@ int main(int c, char **av)
 	(void) c;
     (void) av;
 	ft_init(&philo);
-	// ft_get_time(&philo);
 	tmp = philo.human.next;
 	i = 0;
 	idthread = malloc(sizeof(pthread_t) * philo.av.nbr_philo);
@@ -234,13 +231,6 @@ int main(int c, char **av)
 		i++;
 	}
 	tmp = philo.human.next;
-	// while (1)
-	// {
-	// 	if ()
-	// }
-	// pthread_join(my_thread, NULL);
-	// pthread_join(my_thread2, NULL);
-	// fprintf(stderr, "value = %d\n", philo.value);
 	while (1)
 		(void) i;
     return(0);
