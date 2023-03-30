@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/28 16:18:24 by ngriveau          #+#    #+#             */
-/*   Updated: 2023/03/30 16:49:58 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/03/30 18:42:13 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,15 +71,16 @@ void ft_init(t_philo *philo)
 	philo->deadstop = 0;
 	philo->av.time = philo->tv.tv_usec/1000 + philo->tv.tv_sec*1000;
 	philo->av.nbr_philo = 4;
-	philo->av.die = 20;
-	philo->av.eat = 9;
-	philo->av.sleep = 9;
+	philo->av.die = 50;
+	philo->av.eat = 10;
+	philo->av.sleep = 10;
 	philo->human.nb = -42;
 	philo->human.status = -42;
 	philo->human.timing = -42;
 	philo->human.leftfork = NULL;
 	philo->human.rightfork = NULL;
 	pthread_mutex_init(&philo->printmutex, NULL);
+	pthread_mutex_init(&philo->startmutex, NULL);
 	ft_create_fork(philo);
 	ft_create_philo(philo);
 }
@@ -144,6 +145,8 @@ void *ft_philo(void *av)
 	human = (t_human *)av;
 	philo = (t_philo *) human->philo;
 	human->timing = ft_get_time();
+	pthread_mutex_lock(&philo->startmutex);
+	pthread_mutex_unlock(&philo->startmutex);
 	while (1)
 	{
 		ft_lock_mutex_id(philo, human);
@@ -196,15 +199,21 @@ int main(int c, char **av)
 	tmp = philo.human.next;
 	i = 0;
 	idthread = malloc(sizeof(pthread_t) * philo.av.nbr_philo);
+	pthread_mutex_lock(&philo.startmutex);
 	while (tmp)
 	{
 		pthread_create(&idthread[i], NULL, ft_philo, tmp);
 		tmp = tmp->next;
 		i++;
 	}
+	pthread_mutex_unlock(&philo.startmutex);
 	tmp = philo.human.next;
 	while (philo.deadstop == 0)
+	{
+		tmp = philo.human.next;
+
 		(void) i;
+	}
 	usleep(10);
     return(0);
 }
