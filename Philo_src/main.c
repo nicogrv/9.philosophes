@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/28 16:18:24 by ngriveau          #+#    #+#             */
-/*   Updated: 2023/03/30 15:55:28 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/03/30 16:49:58 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,26 +24,26 @@ void ft_create_fork(t_philo *philo)
 	while(++i < philo->av.nbr_philo)
 	{
 		pthread_mutex_init(&philo->av.mutex[i], NULL);
-		philo->av.fork[i] = i;
+		philo->av.fork[i] = 0;
 	}
 	return ;
 }
 
 
-void ft_create_philo(t_philo *philo, t_human *human)
+void ft_create_philo(t_philo *philo)
 {
 	int i;
 	t_human *tmp;
 
 	i = 1;
-	tmp = human;
+	tmp = &philo->human;
 	while (i <= philo->av.nbr_philo)
 	{
 		tmp->next = malloc(sizeof(t_human));
 		if (tmp->next == NULL)
 			return ;
 		tmp = tmp->next;
-		tmp->philo = philo;
+		tmp->philo = (void *) philo;
 		tmp->nb = i;
 		tmp->status = THINK;
 		tmp->timing = philo->tv.tv_usec;
@@ -65,24 +65,23 @@ void ft_create_philo(t_philo *philo, t_human *human)
 }
 
 
-void ft_init(t_philo *philo, t_human *human)
+void ft_init(t_philo *philo)
 {
 	gettimeofday(&philo->tv, NULL);
 	philo->deadstop = 0;
 	philo->av.time = philo->tv.tv_usec/1000 + philo->tv.tv_sec*1000;
-	philo->av.nbr_philo = 20;
-	philo->av.die = 200;
-	philo->av.eat = 3000;
-	philo->av.sleep = 300;
-	human->nb = -42;
-	human->status = -42;
-	human->timing = -42;
-	human->leftfork = NULL;
-	human->rightfork = NULL;
+	philo->av.nbr_philo = 4;
+	philo->av.die = 20;
+	philo->av.eat = 9;
+	philo->av.sleep = 9;
+	philo->human.nb = -42;
+	philo->human.status = -42;
+	philo->human.timing = -42;
+	philo->human.leftfork = NULL;
+	philo->human.rightfork = NULL;
 	pthread_mutex_init(&philo->printmutex, NULL);
 	ft_create_fork(philo);
-	ft_create_philo(philo, human);
-
+	ft_create_philo(philo);
 }
 long ft_get_time(void)
 {
@@ -143,7 +142,7 @@ void *ft_philo(void *av)
 	t_human *human;
 	
 	human = (t_human *)av;
-	philo = human->philo;
+	philo = (t_philo *) human->philo;
 	human->timing = ft_get_time();
 	while (1)
 	{
@@ -156,7 +155,7 @@ void *ft_philo(void *av)
 				ft_unlock_mutex_id(human);
 				philo->deadstop = 1;
 				pthread_mutex_lock(&philo->printmutex);
-				printf("\e[31;1m%ld\t%d died\e[0m\n", ft_get_time() - philo->av.time, human->nb);
+				printf("\e[31;1m""%ld\t%d died\e[0m\n", ft_get_time() - philo->av.time, human->nb);
 				return NULL;
 			}
 			*human->leftfork = human->nb;
@@ -164,7 +163,6 @@ void *ft_philo(void *av)
 			if (human->nb == *human->leftfork && human->nb == *human->rightfork)
 			{
 				human->status = EAT;
-				printf("miam miam \n\n\n");
 				ft_print_info(philo, human);
 				gettimeofday(&philo->tv, NULL);
 				human->timing = ft_get_time();
@@ -188,16 +186,14 @@ void *ft_philo(void *av)
 int main(int c, char **av)
 {
 	t_philo		philo;
-	t_human		human;
-	t_human		*tmp;
 	pthread_t	*idthread;
-	int i;
+	t_human		*tmp;
+	int			i;
     
 	(void) c;
     (void) av;
-	ft_init(&philo, &human);
-	// human.philo = &philo;
-	tmp = human.next;
+	ft_init(&philo);
+	tmp = philo.human.next;
 	i = 0;
 	idthread = malloc(sizeof(pthread_t) * philo.av.nbr_philo);
 	while (tmp)
@@ -206,8 +202,9 @@ int main(int c, char **av)
 		tmp = tmp->next;
 		i++;
 	}
+	tmp = philo.human.next;
 	while (philo.deadstop == 0)
-		;
+		(void) i;
 	usleep(10);
     return(0);
 }

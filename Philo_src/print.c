@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/30 14:30:44 by ngriveau          #+#    #+#             */
-/*   Updated: 2023/03/30 15:39:39 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/03/30 16:42:28 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ void ft_print_info(t_philo *philo, t_human *human)
 
 void ft_print_take_fork(t_philo *philo, t_human *human, int side)
 {
+	gettimeofday(&philo->tv, NULL);
 	if (side == 0)
 	{
 		pthread_mutex_lock(&philo->printmutex);
