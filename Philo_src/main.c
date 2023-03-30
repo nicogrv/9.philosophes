@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/28 16:18:24 by ngriveau          #+#    #+#             */
-/*   Updated: 2023/03/30 12:12:23 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/03/30 14:16:15 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,9 +70,10 @@ void ft_create_philo(t_philo *philo)
 void ft_init(t_philo *philo)
 {
 	gettimeofday(&philo->tv, NULL);
+	philo->deadstop = 0;
 	philo->av.time = philo->tv.tv_usec/1000 + philo->tv.tv_sec*1000;
 	philo->av.nbr_philo = 4;
-	philo->av.die = 800;
+	philo->av.die = 200;
 	philo->av.eat = 300;
 	philo->av.sleep = 300;
 	philo->human.nb = -42;
@@ -156,6 +157,16 @@ void ft_unlock_mutex_id(t_human *human)
 }
 
 
+
+int ft_usleep(t_philo *philo, int time)
+{
+	if (philo->deadstop == 1)
+		return (1);
+	usleep(time);
+	if (philo->deadstop == 1)
+		return (1);
+	return (0);
+}
 void *ft_philo(void *av)
 {
 	t_philo *philo;
@@ -177,9 +188,11 @@ void *ft_philo(void *av)
 		ft_lock_mutex_id(philo, human);
 		if (*human->leftfork == 0 && *human->rightfork == 0)
 		{
+			// printf("id = %d \t %ld>=%d\n\n",human->nb, (ft_get_time() - human->timing), philo->av.die);
 			if ((ft_get_time() - human->timing) >= philo->av.die)
 			{
 				ft_unlock_mutex_id(human);
+				philo->deadstop = 1;
 				printf("\e[31;1m%ld\t%d died\e[0m\n", ft_get_time() - philo->av.time, human->nb);
 				return NULL;
 			}
@@ -189,7 +202,8 @@ void *ft_philo(void *av)
 			{
 				human->status = EAT;
 				ft_print_info(philo, human);
-				usleep(philo->av.eat*1000);
+				if (ft_usleep(philo, philo->av.eat*1000))
+					return NULL;
 				gettimeofday(&philo->tv, NULL);
 				human->timing = ft_get_time();
 				*human->leftfork = 0;
@@ -199,10 +213,10 @@ void *ft_philo(void *av)
 		ft_unlock_mutex_id(human);
 		human->status = SLEEP;
 		ft_print_info(philo, human);
-		usleep(philo->av.sleep*1000);
+		if (ft_usleep(philo, philo->av.sleep*1000))
+			return NULL;
 		human->status = THINK;
 		ft_print_info(philo, human);
-		usleep(philo->av.sleep*1000);
 	}
     return NULL;
 }
@@ -226,12 +240,12 @@ int main(int c, char **av)
 		pthread_create(&idthread[i], NULL, ft_philo, &philo);
 		while (0 <= philo.tmpid)
 			(void) i;
-		usleep(100);
 		tmp = tmp->next;
 		i++;
 	}
 	tmp = philo.human.next;
-	while (1)
+	while (philo.deadstop == 0)
 		(void) i;
+	usleep(10);
     return(0);
 }

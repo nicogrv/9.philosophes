@@ -31,7 +31,7 @@ run: all
 	@	./${NAME}
 
 valgrind: all
-	valgrind --leak-check=full --track-fds=yes --show-leak-kinds=all ./${NAME}
+	valgrind ./${NAME}
 
 
 ${OBJS}: ${OBJS_PATH}/%.o: %.c Makefile philo.h
