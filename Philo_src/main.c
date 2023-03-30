@@ -6,14 +6,11 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/28 16:18:24 by ngriveau          #+#    #+#             */
-/*   Updated: 2023/03/30 14:16:15 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/03/30 14:34:35 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
-
 #include "./_Include/philo.h"
-
 
 
 void ft_create_fork(t_philo *philo)
@@ -81,6 +78,7 @@ void ft_init(t_philo *philo)
 	philo->human.timing = -42;
 	philo->human.leftfork = NULL;
 	philo->human.rightfork = NULL;
+	pthread_mutex_init(&philo->printmutex, NULL);
 	ft_create_fork(philo);
 	ft_create_philo(philo);
 }
@@ -91,36 +89,6 @@ long ft_get_time(void)
 	gettimeofday(&tv, NULL);
 	return (tv.tv_usec/1000 + tv.tv_sec*1000);
 }
-
-
-void ft_print_info(t_philo *philo, t_human *human)
-{
-	gettimeofday(&philo->tv, NULL);
-	if (human->status == EAT)
-		printf("\e[33;1m%ld\t%d is eating\e[0m\n",ft_get_time() - philo->av.time, human->nb);
-	else if (human->status == SLEEP)
-		printf("\e[35;1m%ld\t%d is sleeping\e[0m\n",ft_get_time() - philo->av.time, human->nb);
-	else if (human->status == THINK)
-		printf("\e[32;1m%ld\t%d is thinking\e[0m\n",ft_get_time() - philo->av.time, human->nb);
-	else 
-		printf("\e[31;1m%ld\t%d ERROR\e[0m\n",ft_get_time() - philo->av.time, human->nb);
-	
-
-}
-
-
-void ft_print_take_fork(t_philo *philo, t_human *human, int side)
-{
-	gettimeofday(&philo->tv, NULL);
-	if (side == 0)
-		printf("\e[34;1m%ld\t%d has taken a fork\e[0m\n", ft_get_time() - philo->av.time, human->nb);
-	else if (side == 1)
-		printf("\e[34;1m%ld\t%d has taken a fork\e[0m\n", ft_get_time() - philo->av.time, human->nb);
-	else
-		printf("\e[31;1m%ld\t%d has taken a fork\e[0m\n", ft_get_time() - philo->av.time, human->nb);
-		
-}
-
 
 void ft_lock_mutex_id(t_philo *philo, t_human *human)
 {
@@ -193,6 +161,7 @@ void *ft_philo(void *av)
 			{
 				ft_unlock_mutex_id(human);
 				philo->deadstop = 1;
+				pthread_mutex_lock(&philo->printmutex);
 				printf("\e[31;1m%ld\t%d died\e[0m\n", ft_get_time() - philo->av.time, human->nb);
 				return NULL;
 			}

@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 16:05:10 by pbizien           #+#    #+#             */
-/*   Updated: 2023/03/30 13:54:44 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/03/30 14:32:37 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,9 +62,27 @@ typedef struct s_philo
 	t_human			human;
 	struct timeval	tv;
 	int				tmpid;
-	pthread_mutex_t mutex;
+	pthread_mutex_t printmutex;
 	int				deadstop;
+	
 }				t_philo;
+
+
+
+//Print
+void	ft_print_info(t_philo *philo, t_human *human);
+void	ft_print_take_fork(t_philo *philo, t_human *human, int side);
+
+//main
+void ft_create_fork(t_philo *philo);
+void ft_create_philo(t_philo *philo);
+void ft_init(t_philo *philo);
+long ft_get_time(void);
+void ft_lock_mutex_id(t_philo *philo, t_human *human);
+void ft_unlock_mutex_id(t_human *human);
+int ft_usleep(t_philo *philo, int time);
+void *ft_philo(void *av);
+int main(int c, char **av);
 
 
 #endif

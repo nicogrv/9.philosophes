@@ -1,6 +1,7 @@
 SHELL = /bin/bash
 
 SRCS += main.c
+SRCS += print.c
 
 SRC_PATH += ./Philo_src/
 
