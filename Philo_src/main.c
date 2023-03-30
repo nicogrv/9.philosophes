@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/28 16:18:24 by ngriveau          #+#    #+#             */
-/*   Updated: 2023/03/30 14:34:35 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/03/30 15:09:33 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ void ft_create_philo(t_philo *philo)
 		tmp->next = malloc(sizeof(t_human));
 		if (tmp->next == NULL)
 			return ;
+		tmp->philo = &philo;
 		tmp = tmp->next;
 		tmp->nb = i;
 		tmp->status = THINK;
@@ -69,7 +70,7 @@ void ft_init(t_philo *philo)
 	gettimeofday(&philo->tv, NULL);
 	philo->deadstop = 0;
 	philo->av.time = philo->tv.tv_usec/1000 + philo->tv.tv_sec*1000;
-	philo->av.nbr_philo = 4;
+	philo->av.nbr_philo = 10;
 	philo->av.die = 200;
 	philo->av.eat = 300;
 	philo->av.sleep = 300;
@@ -171,10 +172,10 @@ void *ft_philo(void *av)
 			{
 				human->status = EAT;
 				ft_print_info(philo, human);
-				if (ft_usleep(philo, philo->av.eat*1000))
-					return NULL;
 				gettimeofday(&philo->tv, NULL);
 				human->timing = ft_get_time();
+				if (ft_usleep(philo, philo->av.eat*1000))
+					return NULL;
 				*human->leftfork = 0;
 				*human->rightfork = 0;
 			}

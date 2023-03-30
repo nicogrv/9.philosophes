@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 16:05:10 by pbizien           #+#    #+#             */
-/*   Updated: 2023/03/30 14:32:37 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/03/30 15:09:51 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,17 +33,6 @@
 # define SLEEP 10
 # define THINK 12
 
-typedef struct s_human
-{
-	int				nb;
-	int				status;
-	long			timing;
-	int				*leftfork;
-	pthread_mutex_t	*leftmutex;
-	int				*rightfork;
-	pthread_mutex_t	*rightmutex;
-	struct s_human	*next;
-}				t_human;
 
 typedef struct s_init
 {
@@ -67,6 +56,19 @@ typedef struct s_philo
 	
 }				t_philo;
 
+typedef struct s_human
+{
+	int				nb;
+	int				nbofeat;
+	int				status;
+	long			timing;
+	int				*leftfork;
+	pthread_mutex_t	*leftmutex;
+	int				*rightfork;
+	pthread_mutex_t	*rightmutex;
+	struct s_human	*next;
+	void			*philo;
+}				t_human;
 
 
 //Print
