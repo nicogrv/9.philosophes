@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 16:05:10 by pbizien           #+#    #+#             */
-/*   Updated: 2023/03/30 16:52:01 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/03/30 17:04:10 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,9 @@
 # define SLEEP 10
 # define THINK 12
 
+# define BOLD "\e[1m"
 
-# define NOCOLOR "\033[0m"
+# define NC "\033[0m"
 # define RED "\033[0;31m"
 # define GREEN "\033[0;32m"
 # define ORANGE "\033[0;33m"
