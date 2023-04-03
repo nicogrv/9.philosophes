@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 16:05:10 by pbizien           #+#    #+#             */
-/*   Updated: 2023/03/30 18:31:13 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/04/03 14:15:24 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ typedef struct s_human
 	int				nb;
 	int				nbofeat;
 	int				status;
-	long			timing;
+	long long		timing;
 	int				*leftfork;
 	pthread_mutex_t	*leftmutex;
 	int				*rightfork;
@@ -74,7 +74,7 @@ typedef struct s_init
 	int				eat;
 	int				sleep;
 	int				*fork;
-	long			time;
+	long long		time;
 	pthread_mutex_t *mutex;
 }				t_init;
 
@@ -98,7 +98,7 @@ void	ft_print_take_fork(t_philo *philo, t_human *human, int side);
 void ft_create_fork(t_philo *philo);
 void ft_create_philo(t_philo *philo);
 void ft_init(t_philo *philo);
-long ft_get_time(void);
+long long ft_get_time(void);
 void ft_lock_mutex_id(t_philo *philo, t_human *human);
 void ft_unlock_mutex_id(t_human *human);
 int ft_usleep(t_philo *philo, int time);
