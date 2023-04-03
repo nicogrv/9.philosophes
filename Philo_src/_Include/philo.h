@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 16:05:10 by pbizien           #+#    #+#             */
-/*   Updated: 2023/04/03 14:15:24 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/04/03 17:24:54 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@
 typedef struct s_human
 {
 	int				nb;
-	int				nbofeat;
+	int				nb_eat;
 	int				status;
 	long long		timing;
 	int				*leftfork;
@@ -70,6 +70,8 @@ typedef struct s_human
 typedef struct s_init
 {
 	int				nbr_philo;
+	int				nbr_philo_eat;
+	int				nbr_eat;
 	int				die;
 	int				eat;
 	int				sleep;

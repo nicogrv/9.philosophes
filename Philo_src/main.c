@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/28 16:18:24 by ngriveau          #+#    #+#             */
-/*   Updated: 2023/04/03 16:08:42 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/04/03 17:54:21 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ void ft_create_philo(t_philo *philo)
 		tmp = tmp->next;
 		tmp->philo = (void *) philo;
 		tmp->nb = i;
+		tmp->nb_eat = 0;
 		tmp->status = THINK;
 		tmp->timing = philo->tv.tv_usec;
 		tmp->leftfork = &philo->av.fork[i - 1];
@@ -70,9 +71,10 @@ void ft_init(t_philo *philo)
 	gettimeofday(&philo->tv, NULL);
 	philo->deadstop = 0;
 	philo->av.nbr_philo = 4;
-	philo->av.die = 410*1000;
-	philo->av.eat = 200*1000;
-	philo->av.sleep = 200*1000;
+	philo->av.nbr_eat = -42;
+	philo->av.die = 400*1000;
+	philo->av.eat = 150*1000;
+	philo->av.sleep = 100*1000;
 	philo->human.nb = -42;
 	philo->human.status = -42;
 	philo->human.timing = -42;
@@ -88,12 +90,12 @@ long long ft_get_time(void)
 	static struct timeval	tv;
 
 	gettimeofday(&tv, NULL);
-	return (tv.tv_usec + tv.tv_sec*1000000 );
+	return (tv.tv_usec + tv.tv_sec*1000000);
 }
 
 void ft_lock_mutex_id(t_philo *philo, t_human *human)
 {
-	printf("%lld\tn`%d lock\n", ft_get_time() - philo->av.time, human->nb);
+	// printf("%lld\tn`%d lock\n", ft_get_time() - philo->av.time, human->nb);
 	if (human->nb % 2 == 0)
 	{
 		pthread_mutex_lock(human->leftmutex);
@@ -135,12 +137,8 @@ int ft_usleep(t_philo *philo, int time)
 		return (1);
 	tmp = ft_get_time();
 	// printf("\n%lld\ttime%lld\n",ft_get_time() - philo->av.time, tmp + time - philo->av.time);
-	while (ft_get_time() < ((tmp + time) - (tmp + time - philo->av.time)%1000))
-	{
-		// fprintf(stderr, "get = %lld\ntmp = %lld\n", ft_get_time(), tmp);
-		// usleep(20);
-		;
-	}
+	while (ft_get_time() < (tmp + time))
+		usleep(5);
 	// printf("exit = %lld(%lld)%lld\n", ft_get_time()- philo->av.time, tmp + time - philo->av.time,((tmp + time - philo->av.time)%1000) );
 	if (philo->deadstop == 1)
 		return (1);
@@ -156,37 +154,31 @@ void *ft_philo(void *av)
 	human->timing = ft_get_time();
 	pthread_mutex_lock(&philo->startmutex);
 	pthread_mutex_unlock(&philo->startmutex);
-	printf("%lld\tn`%d start\n", ft_get_time() - philo->av.time, human->nb);
+	// printf("%lld\tn`%d start\n", ft_get_time() - philo->av.time, human->nb);
 	while (1)
 	{
 		ft_lock_mutex_id(philo, human);
-		if (*human->leftfork == 0 && *human->rightfork == 0)
-		{
-			// printf("id = %d \t %ld>=%d\n\n",human->nb, (ft_get_time() - human->timing), philo->av.die);
 			if ((ft_get_time() - human->timing) >= philo->av.die)
 			{
 				ft_unlock_mutex_id(human);
 				philo->deadstop = 1;
 				pthread_mutex_lock(&philo->printmutex);
-				printf("\e[31;1m""%lld\t%d died\e[0m\n", ft_get_time() - philo->av.time, human->nb);
+				printf("\e[31;1m""%lld(%lld)\t%d died\e[0m\n", (ft_get_time() - philo->av.time)/1000, (ft_get_time() - human->timing)/1000, human->nb);
 				return NULL;
 			}
 			*human->leftfork = human->nb;
-			
 			*human->rightfork = human->nb;
-			if (human->nb == *human->leftfork && human->nb == *human->rightfork)
-			{
-				human->status = EAT;
-				ft_print_info(philo, human);
-				gettimeofday(&philo->tv, NULL);
-				human->timing = ft_get_time();
-				if (ft_usleep(philo, philo->av.eat))
-					return NULL;
-				*human->leftfork = 0;
-				*human->rightfork = 0;
-				ft_unlock_mutex_id(human);
-			}
-		}
+			human->status = EAT;
+			human->nb_eat += 1;
+			ft_print_info(philo, human);
+			human->timing = ft_get_time();
+			if (ft_usleep(philo, philo->av.eat))
+				return NULL;
+			*human->leftfork = 0;
+			*human->rightfork = 0;
+			ft_unlock_mutex_id(human);
+		if (human->nb_eat == philo->av.nbr_eat)
+			return NULL;
 		human->status = SLEEP;
 		ft_print_info(philo, human);
 		if (ft_usleep(philo, philo->av.sleep))
