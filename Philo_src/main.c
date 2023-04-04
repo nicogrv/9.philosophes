@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/28 16:18:24 by ngriveau          #+#    #+#             */
-/*   Updated: 2023/04/03 17:54:21 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/04/04 13:43:37 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,9 +72,9 @@ void ft_init(t_philo *philo)
 	philo->deadstop = 0;
 	philo->av.nbr_philo = 4;
 	philo->av.nbr_eat = -42;
-	philo->av.die = 400*1000;
-	philo->av.eat = 150*1000;
-	philo->av.sleep = 100*1000;
+	philo->av.die = 20*1000;
+	philo->av.eat = 9*1000;
+	philo->av.sleep = 9*1000;
 	philo->human.nb = -42;
 	philo->human.status = -42;
 	philo->human.timing = -42;
@@ -138,8 +138,8 @@ int ft_usleep(t_philo *philo, int time)
 	tmp = ft_get_time();
 	// printf("\n%lld\ttime%lld\n",ft_get_time() - philo->av.time, tmp + time - philo->av.time);
 	while (ft_get_time() < (tmp + time))
-		usleep(5);
-	// printf("exit = %lld(%lld)%lld\n", ft_get_time()- philo->av.time, tmp + time - philo->av.time,((tmp + time - philo->av.time)%1000) );
+		usleep(50);
+	printf("exit = %lld(%lld)%lld\n", ft_get_time()- philo->av.time, tmp + time - philo->av.time,((tmp + time - philo->av.time)%1000) );
 	if (philo->deadstop == 1)
 		return (1);
 	return (0);
@@ -214,7 +214,7 @@ int main(int c, char **av)
 	tmp = philo.human.next;
 	while (philo.deadstop == 0)
 	{
-		;
+		
 	}
     return(0);
 }
