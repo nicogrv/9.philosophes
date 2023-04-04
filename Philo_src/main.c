@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/28 16:18:24 by ngriveau          #+#    #+#             */
-/*   Updated: 2023/04/04 14:58:19 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/04/04 15:08:12 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,8 +70,8 @@ void ft_init(t_philo *philo)
 {
 	gettimeofday(&philo->tv, NULL);
 	philo->deadstop = 0;
-	philo->av.nbr_philo = 10;
-	philo->av.nbr_eat = -42;
+	philo->av.nbr_philo = 4;
+	philo->av.nbr_eat = 100;
 	philo->av.die = 410*1000;
 	philo->av.eat = 200*1000;
 	philo->av.sleep = 200*1000;
@@ -158,30 +158,27 @@ void *ft_philo(void *av)
 	while (1)
 	{
 		ft_lock_mutex_id(philo, human);
-			if ((ft_get_time() - human->timing) >= philo->av.die)
-			{
-				ft_unlock_mutex_id(human);
-				pthread_mutex_lock(&philo->printmutex);
-				if (philo->deadstop == 0)
-					printf("\e[31;1m""%lld(%lld)\t%d died\e[0m\n", (ft_get_time() - philo->av.time)/1000, (ft_get_time() - human->timing)/1000, human->nb);
-				pthread_mutex_lock(&philo->endmutex);
-				philo->deadstop = 1;
-				pthread_mutex_unlock(&philo->endmutex);
-				pthread_mutex_unlock(&philo->printmutex);
-				ft_unlock_mutex_id(human);
-				return NULL;
-			}
-			*human->leftfork = human->nb;
-			*human->rightfork = human->nb;
-			human->status = EAT;
-			human->nb_eat += 1;
-			ft_print_info(philo, human);
-			human->timing = ft_get_time();
-			if (ft_usleep(philo, philo->av.eat))
-				return (ft_unlock_mutex_id(human), NULL);
-			*human->leftfork = 0;
-			*human->rightfork = 0;
+		if ((ft_get_time() - human->timing) >= philo->av.die)
+		{
 			ft_unlock_mutex_id(human);
+			pthread_mutex_lock(&philo->printmutex);
+			if (philo->deadstop == 0)
+				printf("\e[31;1m""%lld(%lld)\t%d died\e[0m\n", (ft_get_time() - philo->av.time)/1000, (ft_get_time() - human->timing)/1000, human->nb);
+			pthread_mutex_lock(&philo->endmutex);
+			philo->deadstop = 1;
+			pthread_mutex_unlock(&philo->endmutex);
+			pthread_mutex_unlock(&philo->printmutex);
+			ft_unlock_mutex_id(human);
+			return NULL;
+		}
+		human->status = EAT;
+		human->nb_eat += 1;
+		ft_print_info(philo, human);
+		human->timing = ft_get_time();
+		// printf("human->nb_eat == %d\t philo->av.nbr_eat = %d\n", human->nb_eat, philo->av.nbr_eat);
+		if (philo->av.nbr_eat <= human->nb_eat || ft_usleep(philo, philo->av.eat))
+			return (ft_unlock_mutex_id(human), NULL);
+		ft_unlock_mutex_id(human);
 		if (human->nb_eat == philo->av.nbr_eat)
 			return NULL;
 		human->status = SLEEP;
