@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/04 15:19:54 by ngriveau          #+#    #+#             */
-/*   Updated: 2023/04/04 15:40:15 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/04/04 15:56:27 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@ int	ft_atoi(const char *str)
 	signe = 1;
 	i = 0;
 	nb = 0;
-    fprintf(stderr, "str = %s\n", str);
 	while (('\t' <= str[i] && str[i] <= '\r') || (str[i] == ' '))
 		i++;
 	if (str[i] == '+')

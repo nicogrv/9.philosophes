@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/28 16:18:24 by ngriveau          #+#    #+#             */
-/*   Updated: 2023/04/04 15:42:21 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/04/04 15:55:42 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -224,7 +224,10 @@ int main(int c, char **av)
 	int			i;
     
 	if (ft_parsing(c, av, &philo))
+	{
+		printf(ORANGE"Number_of_philosophers | Time_to_die | Time_to_eat | Time_to_sleep | (Number_of_times_each_philosopher_must_eat)\n\n");
 		return (1);
+	}
 	ft_init(&philo);
 	tmp = philo.human.next;
 	i = 0;
