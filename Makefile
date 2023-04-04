@@ -2,6 +2,10 @@ SHELL = /bin/bash
 
 SRCS += main.c
 SRCS += print.c
+SRCS += ft_verifint.c
+SRCS += ft_atoi.c
+SRCS += 
+
 
 SRC_PATH += ./Philo_src/
 

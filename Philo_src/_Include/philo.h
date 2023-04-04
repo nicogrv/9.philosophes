@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 16:05:10 by pbizien           #+#    #+#             */
-/*   Updated: 2023/04/04 14:33:50 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/04/04 15:37:09 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,5 +108,8 @@ int ft_usleep(t_philo *philo, int time);
 void *ft_philo(void *av);
 int main(int c, char **av);
 
+//Parsing
+int	ft_verifint(char *str);
+int	ft_atoi(const char *str);
 
 #endif

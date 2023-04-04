@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/28 16:18:24 by ngriveau          #+#    #+#             */
-/*   Updated: 2023/04/04 15:08:12 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/04/04 15:42:21 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,11 +70,6 @@ void ft_init(t_philo *philo)
 {
 	gettimeofday(&philo->tv, NULL);
 	philo->deadstop = 0;
-	philo->av.nbr_philo = 4;
-	philo->av.nbr_eat = 100;
-	philo->av.die = 410*1000;
-	philo->av.eat = 200*1000;
-	philo->av.sleep = 200*1000;
 	philo->human.nb = -42;
 	philo->human.status = -42;
 	philo->human.timing = -42;
@@ -191,6 +186,36 @@ void *ft_philo(void *av)
     return NULL;
 }
 
+int ft_parsing(int c, char **av, t_philo *philo)
+{
+	int i;
+
+	i = 1;
+	if (c != 5 && c != 6)
+	{
+		printf(LIGHTRED"Error input (5 or 6 argument)\n"NC);
+		return (1);
+	}
+	while (av[i])
+	{
+		if (ft_verifint(av[i]) == -1)
+		{
+			printf(LIGHTRED"Error input (0 < NUMBER < 2.147.483.648)\n"NC);
+			return (1);
+		}
+		i++;
+	}
+	philo->av.nbr_philo = ft_atoi(av[1]);	
+	philo->av.die = ft_atoi(av[2])*1000;
+	philo->av.eat = ft_atoi(av[3])*1000;
+	philo->av.sleep = ft_atoi(av[4])*1000;
+	if (c == 6)
+		philo->av.nbr_eat = ft_atoi(av[5]);
+	else
+		philo->av.nbr_eat = 2147483647;
+	return (0);
+}
+
 int main(int c, char **av)
 {
 	t_philo		philo;
@@ -198,8 +223,8 @@ int main(int c, char **av)
 	t_human		*tmp;
 	int			i;
     
-	(void) c;
-    (void) av;
+	if (ft_parsing(c, av, &philo))
+		return (1);
 	ft_init(&philo);
 	tmp = philo.human.next;
 	i = 0;
