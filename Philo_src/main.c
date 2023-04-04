@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/28 16:18:24 by ngriveau          #+#    #+#             */
-/*   Updated: 2023/04/04 15:55:42 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/04/04 17:18:02 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,7 +170,6 @@ void *ft_philo(void *av)
 		human->nb_eat += 1;
 		ft_print_info(philo, human);
 		human->timing = ft_get_time();
-		// printf("human->nb_eat == %d\t philo->av.nbr_eat = %d\n", human->nb_eat, philo->av.nbr_eat);
 		if (philo->av.nbr_eat <= human->nb_eat || ft_usleep(philo, philo->av.eat))
 			return (ft_unlock_mutex_id(human), NULL);
 		ft_unlock_mutex_id(human);
@@ -182,6 +181,8 @@ void *ft_philo(void *av)
 			return NULL;
 		human->status = THINK;
 		ft_print_info(philo, human);
+		if (ft_usleep(philo, philo->av.eat - philo->av.sleep + 1000))
+			return NULL;
 	}
     return NULL;
 }
