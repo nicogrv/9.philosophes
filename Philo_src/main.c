@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/28 16:18:24 by ngriveau          #+#    #+#             */
-/*   Updated: 2023/04/04 17:18:02 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/04/05 14:47:18 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ void ft_create_philo(t_philo *philo)
 			return ;
 		tmp = tmp->next;
 		tmp->philo = (void *) philo;
+		tmp->timing = philo->av.time + 500;
 		tmp->nb = i;
 		tmp->nb_eat = 0;
 		tmp->status = THINK;
@@ -63,6 +64,7 @@ void ft_create_philo(t_philo *philo)
 		tmp->next = NULL;
 		i++;
 	}
+	tmp->next = NULL;
 }
 
 
@@ -75,6 +77,7 @@ void ft_init(t_philo *philo)
 	philo->human.timing = -42;
 	philo->human.leftfork = NULL;
 	philo->human.rightfork = NULL;
+	philo->av.time = ft_get_time();
 	pthread_mutex_init(&philo->printmutex, NULL);
 	pthread_mutex_init(&philo->startmutex, NULL);
 	pthread_mutex_init(&philo->endmutex, NULL);
@@ -147,9 +150,11 @@ void *ft_philo(void *av)
 	
 	human = (t_human *)av;
 	philo = (t_philo *) human->philo;
+	while (ft_get_time() < human->start)
+		usleep(50);
 	human->timing = ft_get_time();
-	pthread_mutex_lock(&philo->startmutex);
-	pthread_mutex_unlock(&philo->startmutex);
+	if (human->nb % 2 == 1)
+		usleep(100);
 	while (1)
 	{
 		ft_lock_mutex_id(philo, human);
@@ -220,37 +225,43 @@ int ft_parsing(int c, char **av, t_philo *philo)
 int main(int c, char **av)
 {
 	t_philo		philo;
-	pthread_t	*idthread;
 	t_human		*tmp;
 	int			i;
     
 	if (ft_parsing(c, av, &philo))
 	{
-		printf(ORANGE"Number_of_philosophers | Time_to_die | Time_to_eat | Time_to_sleep | (Number_of_times_each_philosopher_must_eat)\n\n");
+		printf(ORANGE"Number_of_philosophers | Time_to_die | Time_to_eat | Time_to_sleep | (Number_of_times_each_philosopher_must_eat)"NC"\n\n");
 		return (1);
 	}
 	ft_init(&philo);
+	if (philo.av.nbr_philo == 1)
+	{
+		printf("one\n");
+		philo.av.time = ft_get_time();
+		printf("0\t"BOLD" 1 "LIGHTBLUE" has taken a fork"NC"\n");
+		ft_usleep(&philo, philo.av.die);
+		printf("\e[31;1m%d\t1 died"NC"\n", philo.av.die/1000);
+		return (ft_free_all(&philo, 0), 1);
+	}
 	tmp = philo.human.next;
 	i = 0;
-	idthread = malloc(sizeof(pthread_t) * philo.av.nbr_philo);
+	philo.idthread = malloc(sizeof(pthread_t) * philo.av.nbr_philo);
 	pthread_mutex_lock(&philo.startmutex);
 	while (tmp)
 	{
-		pthread_create(&idthread[i], NULL, ft_philo, tmp);
+		pthread_create(&philo.idthread[i], NULL, ft_philo, tmp);
 		tmp = tmp->next;
 		i++;
 	}
-	philo.av.time = ft_get_time();
 	pthread_mutex_unlock(&philo.startmutex);
 	tmp = philo.human.next;
 	i = 0;
 	usleep(1000);
 	while (i < philo.av.nbr_philo)
 	{
-		// printf("Attente de la fin du philo %d\n", i+1);
-        pthread_join(idthread[i], NULL);
-        // printf("phlo %d terminé\n", i+1);
+        pthread_join(philo.idthread[i], NULL);
 		i++;
 	}
+	ft_free_all(&philo, 1);
     return(0);
 }

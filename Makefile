@@ -4,6 +4,7 @@ SRCS += main.c
 SRCS += print.c
 SRCS += ft_verifint.c
 SRCS += ft_atoi.c
+SRCS += ft_free.c
 SRCS += 
 
 

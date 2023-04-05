@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/30 14:30:44 by ngriveau          #+#    #+#             */
-/*   Updated: 2023/04/04 14:56:11 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/04/05 13:38:59 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void ft_print_info(t_philo *philo, t_human *human)
 		pthread_mutex_lock(&philo->printmutex);
 		pthread_mutex_lock(&philo->endmutex);
 		if (philo->deadstop == 0)
-			printf("%lld\t"BOLD"%d"YELLOW" is eating"NC"\n",(ft_get_time() - philo->av.time)/1000, human->nb);
+			printf("%lld\t"BOLD" %d "YELLOW" is eating"NC"\n",(ft_get_time() - philo->av.time)/1000, human->nb);
 		pthread_mutex_unlock(&philo->endmutex);
 		pthread_mutex_unlock(&philo->printmutex);
 
@@ -30,7 +30,7 @@ void ft_print_info(t_philo *philo, t_human *human)
 		pthread_mutex_lock(&philo->printmutex);
 		pthread_mutex_lock(&philo->endmutex);
 		if (philo->deadstop == 0)
-			printf("%lld\t"BOLD"%d"LIGHTPURPLE" is sleeping"NC"\n",(ft_get_time() - philo->av.time)/1000, human->nb);
+			printf("%lld\t"BOLD" %d "LIGHTPURPLE" is sleeping"NC"\n",(ft_get_time() - philo->av.time)/1000, human->nb);
 		pthread_mutex_unlock(&philo->endmutex);
 		pthread_mutex_unlock(&philo->printmutex);
 	}
@@ -39,7 +39,7 @@ void ft_print_info(t_philo *philo, t_human *human)
 		pthread_mutex_lock(&philo->printmutex);
 		pthread_mutex_lock(&philo->endmutex);
 		if (philo->deadstop == 0)
-			printf("%lld\t"BOLD"%d"LIGHTBLUE" is thinking"NC"\n",(ft_get_time() - philo->av.time)/1000, human->nb);
+			printf("%lld\t"BOLD" %d "LIGHTBLUE" is thinking"NC"\n",(ft_get_time() - philo->av.time)/1000, human->nb);
 		pthread_mutex_unlock(&philo->endmutex);
 		pthread_mutex_unlock(&philo->printmutex);
 	}
@@ -61,7 +61,7 @@ void ft_print_take_fork(t_philo *philo, t_human *human, int side)
 		pthread_mutex_lock(&philo->printmutex);
 		pthread_mutex_lock(&philo->endmutex);
 		if (philo->deadstop == 0)
-			printf("%lld\t"BOLD"%d"LIGHTBLUE" has taken a fork"NC"\n",(ft_get_time() - philo->av.time)/1000, human->nb);
+			printf("%lld\t"BOLD" %d "LIGHTBLUE" has taken a fork"NC"\n",(ft_get_time() - philo->av.time)/1000, human->nb);
 		else
 			pthread_mutex_unlock(human->leftmutex);
 		pthread_mutex_unlock(&philo->endmutex);
@@ -72,7 +72,7 @@ void ft_print_take_fork(t_philo *philo, t_human *human, int side)
 		pthread_mutex_lock(&philo->printmutex);
 		pthread_mutex_lock(&philo->endmutex);
 		if (philo->deadstop == 0)
-			printf("%lld\t"BOLD"%d"LIGHTBLUE" has taken a fork"NC"\n",(ft_get_time() - philo->av.time)/1000, human->nb);
+			printf("%lld\t"BOLD" %d "LIGHTBLUE" has taken a fork"NC"\n",(ft_get_time() - philo->av.time)/1000, human->nb);
 		else
 			pthread_mutex_unlock(human->rightmutex);
 		pthread_mutex_unlock(&philo->endmutex);
