@@ -6,98 +6,16 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/28 16:18:24 by ngriveau          #+#    #+#             */
-/*   Updated: 2023/04/05 14:47:18 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/04/05 15:27:07 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./_Include/philo.h"
 
-
-void ft_create_fork(t_philo *philo)
+void	ft_lock_mutex_id(t_philo *philo, t_human *human)
 {
-	int i;
-
-	philo->av.mutex = malloc(sizeof(pthread_mutex_t) * philo->av.nbr_philo);
-	philo->av.fork = malloc(sizeof(int) * (philo->av.nbr_philo + 1));
-	philo->av.fork[philo->av.nbr_philo] = -42;
-	i = -1;
-	while(++i < philo->av.nbr_philo)
-	{
-		pthread_mutex_init(&philo->av.mutex[i], NULL);
-		philo->av.fork[i] = 0;
-	}
-	return ;
-}
-
-
-void ft_create_philo(t_philo *philo)
-{
-	int i;
-	t_human *tmp;
-
-	i = 1;
-	tmp = &philo->human;
-	while (i <= philo->av.nbr_philo)
-	{
-		tmp->next = malloc(sizeof(t_human));
-		if (tmp->next == NULL)
-			return ;
-		tmp = tmp->next;
-		tmp->philo = (void *) philo;
-		tmp->timing = philo->av.time + 500;
-		tmp->nb = i;
-		tmp->nb_eat = 0;
-		tmp->status = THINK;
-		tmp->timing = philo->tv.tv_usec;
-		tmp->leftfork = &philo->av.fork[i - 1];
-		tmp->leftmutex = &philo->av.mutex[i - 1];
-		if (i == philo->av.nbr_philo)
-		{
-			tmp->rightfork = &philo->av.fork[0];
-			tmp->rightmutex = &philo->av.mutex[0];	
-		}
-		else
-		{
-			tmp->rightfork = &philo->av.fork[i];
-			tmp->rightmutex = &philo->av.mutex[i];
-		}
-		tmp->next = NULL;
-		i++;
-	}
-	tmp->next = NULL;
-}
-
-
-void ft_init(t_philo *philo)
-{
-	gettimeofday(&philo->tv, NULL);
-	philo->deadstop = 0;
-	philo->human.nb = -42;
-	philo->human.status = -42;
-	philo->human.timing = -42;
-	philo->human.leftfork = NULL;
-	philo->human.rightfork = NULL;
-	philo->av.time = ft_get_time();
-	pthread_mutex_init(&philo->printmutex, NULL);
-	pthread_mutex_init(&philo->startmutex, NULL);
-	pthread_mutex_init(&philo->endmutex, NULL);
-	ft_create_fork(philo);
-	ft_create_philo(philo);
-}
-long long ft_get_time(void)
-{
-	static struct timeval	tv;
-
-	gettimeofday(&tv, NULL);
-	return (tv.tv_usec + tv.tv_sec*1000000);
-}
-
-void ft_lock_mutex_id(t_philo *philo, t_human *human)
-{
-	// printf("%lld\tn`%d lock\n", ft_get_time() - philo->av.time, human->nb);
 	if (human->nb % 2 == 0)
 	{
-		
 		pthread_mutex_lock(human->leftmutex);
 		ft_print_take_fork(philo, human, 0);
 		pthread_mutex_lock(human->rightmutex);
@@ -113,7 +31,7 @@ void ft_lock_mutex_id(t_philo *philo, t_human *human)
 	return ;
 }
 
-void ft_unlock_mutex_id(t_human *human)
+void	ft_unlock_mutex_id(t_human *human)
 {
 	if (human->nb % 2 == 0)
 	{
@@ -128,121 +46,32 @@ void ft_unlock_mutex_id(t_human *human)
 	return ;
 }
 
-
-
-int ft_usleep(t_philo *philo, int time)
+void	main_end(t_philo *philo)
 {
-	long long tmp;
-	if (philo->deadstop == 1)
-		return (1);
-	tmp = ft_get_time();
-	// printf("\n%lld\ttime%lld\n",ft_get_time() - philo->av.time, tmp + time - philo->av.time);
-	while (ft_get_time() < (tmp + time))
-		usleep(50);
-	if (philo->deadstop == 1)
-		return (1);
-	return (0);
-}
-void *ft_philo(void *av)
-{
-	t_philo *philo;
-	t_human *human;
-	
-	human = (t_human *)av;
-	philo = (t_philo *) human->philo;
-	while (ft_get_time() < human->start)
-		usleep(50);
-	human->timing = ft_get_time();
-	if (human->nb % 2 == 1)
-		usleep(100);
-	while (1)
-	{
-		ft_lock_mutex_id(philo, human);
-		if ((ft_get_time() - human->timing) >= philo->av.die)
-		{
-			ft_unlock_mutex_id(human);
-			pthread_mutex_lock(&philo->printmutex);
-			if (philo->deadstop == 0)
-				printf("\e[31;1m""%lld(%lld)\t%d died\e[0m\n", (ft_get_time() - philo->av.time)/1000, (ft_get_time() - human->timing)/1000, human->nb);
-			pthread_mutex_lock(&philo->endmutex);
-			philo->deadstop = 1;
-			pthread_mutex_unlock(&philo->endmutex);
-			pthread_mutex_unlock(&philo->printmutex);
-			ft_unlock_mutex_id(human);
-			return NULL;
-		}
-		human->status = EAT;
-		human->nb_eat += 1;
-		ft_print_info(philo, human);
-		human->timing = ft_get_time();
-		if (philo->av.nbr_eat <= human->nb_eat || ft_usleep(philo, philo->av.eat))
-			return (ft_unlock_mutex_id(human), NULL);
-		ft_unlock_mutex_id(human);
-		if (human->nb_eat == philo->av.nbr_eat)
-			return NULL;
-		human->status = SLEEP;
-		ft_print_info(philo, human);
-		if (ft_usleep(philo, philo->av.sleep))
-			return NULL;
-		human->status = THINK;
-		ft_print_info(philo, human);
-		if (ft_usleep(philo, philo->av.eat - philo->av.sleep + 1000))
-			return NULL;
-	}
-    return NULL;
-}
+	int	i;
 
-int ft_parsing(int c, char **av, t_philo *philo)
-{
-	int i;
-
-	i = 1;
-	if (c != 5 && c != 6)
+	i = 0;
+	usleep(1000);
+	while (i < philo->av.nbr_philo)
 	{
-		printf(LIGHTRED"Error input (5 or 6 argument)\n"NC);
-		return (1);
-	}
-	while (av[i])
-	{
-		if (ft_verifint(av[i]) == -1)
-		{
-			printf(LIGHTRED"Error input (0 < NUMBER < 2.147.483.648)\n"NC);
-			return (1);
-		}
+		pthread_join(philo->idthread[i], NULL);
 		i++;
 	}
-	philo->av.nbr_philo = ft_atoi(av[1]);	
-	philo->av.die = ft_atoi(av[2])*1000;
-	philo->av.eat = ft_atoi(av[3])*1000;
-	philo->av.sleep = ft_atoi(av[4])*1000;
-	if (c == 6)
-		philo->av.nbr_eat = ft_atoi(av[5]);
-	else
-		philo->av.nbr_eat = 2147483647;
-	return (0);
+	ft_free_all(philo, 1);
 }
 
-int main(int c, char **av)
+int	main(int c, char **av)
 {
 	t_philo		philo;
 	t_human		*tmp;
 	int			i;
-    
+
 	if (ft_parsing(c, av, &philo))
-	{
-		printf(ORANGE"Number_of_philosophers | Time_to_die | Time_to_eat | Time_to_sleep | (Number_of_times_each_philosopher_must_eat)"NC"\n\n");
-		return (1);
-	}
+		return (printf(ORANGE"Number_of_philosophers | Time_to_die | Time_to_ea\
+t | Time_to_sleep | (Number_of_times_each_philosopher_must_eat)"NC"\n\n"));
 	ft_init(&philo);
 	if (philo.av.nbr_philo == 1)
-	{
-		printf("one\n");
-		philo.av.time = ft_get_time();
-		printf("0\t"BOLD" 1 "LIGHTBLUE" has taken a fork"NC"\n");
-		ft_usleep(&philo, philo.av.die);
-		printf("\e[31;1m%d\t1 died"NC"\n", philo.av.die/1000);
-		return (ft_free_all(&philo, 0), 1);
-	}
+		return (ft_one_philo(&philo), 1);
 	tmp = philo.human.next;
 	i = 0;
 	philo.idthread = malloc(sizeof(pthread_t) * philo.av.nbr_philo);
@@ -254,14 +83,5 @@ int main(int c, char **av)
 		i++;
 	}
 	pthread_mutex_unlock(&philo.startmutex);
-	tmp = philo.human.next;
-	i = 0;
-	usleep(1000);
-	while (i < philo.av.nbr_philo)
-	{
-        pthread_join(philo.idthread[i], NULL);
-		i++;
-	}
-	ft_free_all(&philo, 1);
-    return(0);
+	return (main_end(&philo), 0);
 }

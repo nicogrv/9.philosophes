@@ -1,10 +1,14 @@
 SHELL = /bin/bash
 
-SRCS += main.c
-SRCS += print.c
-SRCS += ft_verifint.c
 SRCS += ft_atoi.c
 SRCS += ft_free.c
+SRCS += ft_init.c
+SRCS += ft_verifinput.c
+SRCS += main.c
+SRCS += philo.c
+SRCS += print.c
+SRCS += utiles.c
+SRCS += 
 SRCS += 
 
 

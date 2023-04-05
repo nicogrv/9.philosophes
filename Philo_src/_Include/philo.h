@@ -6,14 +6,13 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 16:05:10 by pbizien           #+#    #+#             */
-/*   Updated: 2023/04/05 14:33:33 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/04/05 15:40:39 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PHILO_H
 
 # define PHILO_H
-
 
 # include <stdio.h>
 # include <unistd.h>
@@ -78,7 +77,7 @@ typedef struct s_init
 	int				sleep;
 	int				*fork;
 	long long		time;
-	pthread_mutex_t *mutex;
+	pthread_mutex_t	*mutex;
 }				t_init;
 
 typedef struct s_philo
@@ -86,35 +85,40 @@ typedef struct s_philo
 	t_init			av;
 	t_human			human;
 	struct timeval	tv;
-	pthread_mutex_t printmutex;
-	pthread_mutex_t startmutex;
-	pthread_mutex_t endmutex;
+	pthread_mutex_t	printmutex;
+	pthread_mutex_t	startmutex;
+	pthread_mutex_t	endmutex;
 	pthread_t		*idthread;
 	int				deadstop;
 }				t_philo;
 
-
-
 //Print
-void	ft_print_info(t_philo *philo, t_human *human);
-void	ft_print_take_fork(t_philo *philo, t_human *human, int side);
+void		ft_print_info(t_philo *philo, t_human *human);
+void		ft_print_take_fork(t_philo *philo, t_human *human, int side);
 
 //main
-void ft_create_fork(t_philo *philo);
-void ft_create_philo(t_philo *philo);
-void ft_init(t_philo *philo);
-long long ft_get_time(void);
-void ft_lock_mutex_id(t_philo *philo, t_human *human);
-void ft_unlock_mutex_id(t_human *human);
-int ft_usleep(t_philo *philo, int time);
-void *ft_philo(void *av);
-int main(int c, char **av);
+void		ft_create_fork(t_philo *philo);
+void		ft_create_philo(t_philo *philo);
+void		ft_init(t_philo *philo);
+void		ft_lock_mutex_id(t_philo *philo, t_human *human);
+void		ft_unlock_mutex_id(t_human *human);
+int			ft_usleep(t_philo *philo, int time);
+int			main(int c, char **av);
+
+//Philo
+void		ft_one_philo(t_philo *philo);
+void		*ft_philo(void *av);
 
 //Parsing
-int	ft_verifint(char *str);
-int	ft_atoi(const char *str);
+int			ft_verifint(char *str);
+int			ft_parsing(int c, char **av, t_philo *philo);
+int			ft_atoi(const char *str);
 
 //Free
-void ft_free_all(t_philo *philo, int id);
+void		ft_free_all(t_philo *philo, int id);
+
+//Utiles
+long long	ft_get_time(void);
+int			ft_usleep(t_philo *philo, int time);
 
 #endif
