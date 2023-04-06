@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/04 15:19:54 by ngriveau          #+#    #+#             */
-/*   Updated: 2023/04/06 14:07:45 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/04/06 14:16:40 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,12 @@ int	ft_philo_suit(t_human *human, t_philo *philo)
 	pthread_mutex_lock(&human->mutex_timing);
 	human->nb_eat += 1;
 	human->timing = ft_get_time();
-	if (philo->av.nbr_eat <= human->nb_eat || ft_usleep(philo, philo->av.eat))
+	if (philo->av.nbr_eat <= human->nb_eat)
 		return (ft_unlock_mutex_id(human), pthread_mutex_unlock(&human->mutex_timing), 1);
-	ft_unlock_mutex_id(human);
 	pthread_mutex_unlock(&human->mutex_timing);
+	if (ft_usleep(philo, philo->av.eat))
+		return (ft_unlock_mutex_id(human), 1);
+	ft_unlock_mutex_id(human);
 	if (human->nb_eat == philo->av.nbr_eat)
 		return (1);
 	human->status = SLEEP;
