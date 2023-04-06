@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/28 16:18:24 by ngriveau          #+#    #+#             */
-/*   Updated: 2023/04/06 12:21:50 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/04/06 14:13:50 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ void	main_end(t_philo *philo)
 			human = &philo->human;
 		}
 		human = human->next;
-		ft_usleep(philo, wait);
+		ft_usleep(philo, 30);
 	}
 	i = -1;
 	while (++i < philo->av.nbr_philo)

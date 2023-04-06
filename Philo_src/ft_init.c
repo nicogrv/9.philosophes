@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/05 15:18:00 by ngriveau          #+#    #+#             */
-/*   Updated: 2023/04/06 11:49:30 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/04/06 14:00:59 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ void	ft_create_philo(t_philo *philo)
 		tmp = tmp->next;
 		tmp->philo = (void *) philo;
 		tmp->nb = i;
-		tmp->timing = philo->av.time + 500;
+		tmp->start = philo->av.time + 500;
 		tmp->nb_eat = 0;
 		tmp->status = THINK;
 		tmp->timing = philo->tv.tv_usec;
