@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/04 15:19:54 by ngriveau          #+#    #+#             */
-/*   Updated: 2023/04/06 10:38:48 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/04/06 11:09:01 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,8 +63,6 @@ void	*ft_philo(void *av)
 	while (1)
 	{
 		ft_lock_mutex_id(philo, human);
-		if ((ft_get_time() - human->timing) >= philo->av.die)
-			return (ft_philo_death(human, philo), NULL);
 		if (ft_philo_suit(human, philo))
 			return (NULL);
 	}

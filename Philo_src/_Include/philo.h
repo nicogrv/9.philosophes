@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 16:05:10 by pbizien           #+#    #+#             */
-/*   Updated: 2023/04/06 11:04:11 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/04/06 11:15:18 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,6 +107,7 @@ int			main(int c, char **av);
 
 //Philo
 void		ft_one_philo(t_philo *philo);
+void		ft_philo_death(t_human *human, t_philo *philo);
 void		*ft_philo(void *av);
 
 //Parsing
