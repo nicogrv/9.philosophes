@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 16:05:10 by pbizien           #+#    #+#             */
-/*   Updated: 2023/04/05 15:40:39 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/04/06 11:04:11 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,9 +86,9 @@ typedef struct s_philo
 	t_human			human;
 	struct timeval	tv;
 	pthread_mutex_t	printmutex;
-	pthread_mutex_t	startmutex;
 	pthread_mutex_t	endmutex;
 	pthread_t		*idthread;
+	// pthread_t		deathidthread;
 	int				deadstop;
 }				t_philo;
 

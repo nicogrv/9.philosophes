@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/28 16:18:24 by ngriveau          #+#    #+#             */
-/*   Updated: 2023/04/05 15:27:07 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/04/06 11:06:48 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,12 +46,19 @@ void	ft_unlock_mutex_id(t_human *human)
 	return ;
 }
 
+
 void	main_end(t_philo *philo)
 {
 	int	i;
-
-	i = 0;
+	t_human human;
+	
 	usleep(1000);
+	i = 0;
+	human = &philo->human.next;
+	while (1)
+	{
+		
+	}
 	while (i < philo->av.nbr_philo)
 	{
 		pthread_join(philo->idthread[i], NULL);
@@ -75,13 +82,11 @@ t | Time_to_sleep | (Number_of_times_each_philosopher_must_eat)"NC"\n\n"));
 	tmp = philo.human.next;
 	i = 0;
 	philo.idthread = malloc(sizeof(pthread_t) * philo.av.nbr_philo);
-	pthread_mutex_lock(&philo.startmutex);
 	while (tmp)
 	{
 		pthread_create(&philo.idthread[i], NULL, ft_philo, tmp);
 		tmp = tmp->next;
 		i++;
 	}
-	pthread_mutex_unlock(&philo.startmutex);
 	return (main_end(&philo), 0);
 }
