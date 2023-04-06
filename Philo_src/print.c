@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/30 14:30:44 by ngriveau          #+#    #+#             */
-/*   Updated: 2023/04/05 15:33:09 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/04/06 12:35:14 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,8 +59,6 @@ void	ft_print_take_fork(t_philo *philo, t_human *human, int side)
 		if (philo->deadstop == 0)
 			printf("%lld\t"BOLD" %d "LIGHTBLUE" has taken a fork"NC"\n", \
 				(ft_get_time() - philo->av.time) / 1000, human->nb);
-		else
-			pthread_mutex_unlock(human->leftmutex);
 		pthread_mutex_unlock(&philo->endmutex);
 		pthread_mutex_unlock(&philo->printmutex);
 	}
@@ -71,8 +69,6 @@ void	ft_print_take_fork(t_philo *philo, t_human *human, int side)
 		if (philo->deadstop == 0)
 			printf("%lld\t"BOLD" %d "LIGHTBLUE" has taken a fork"NC"\n", \
 				(ft_get_time() - philo->av.time) / 1000, human->nb);
-		else
-			pthread_mutex_unlock(human->rightmutex);
 		pthread_mutex_unlock(&philo->endmutex);
 		pthread_mutex_unlock(&philo->printmutex);
 	}

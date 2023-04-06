@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/05 15:18:00 by ngriveau          #+#    #+#             */
-/*   Updated: 2023/04/06 11:04:41 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/04/06 11:49:30 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ void	ft_create_philo(t_philo *philo)
 		tmp->timing = philo->tv.tv_usec;
 		tmp->leftfork = &philo->av.fork[i - 1];
 		tmp->leftmutex = &philo->av.mutex[i - 1];
+		pthread_mutex_init(&tmp->mutex_timing, NULL);
 		ft_create_philo_2(philo, tmp, i);
 		i++;
 	}
@@ -80,6 +81,7 @@ void	ft_init(t_philo *philo)
 	philo->human.leftfork = NULL;
 	philo->human.rightfork = NULL;
 	philo->av.time = ft_get_time();
+	pthread_mutex_init(&philo->printmutex, NULL);
 	pthread_mutex_init(&philo->printmutex, NULL);
 	pthread_mutex_init(&philo->endmutex, NULL);
 	ft_create_fork(philo);

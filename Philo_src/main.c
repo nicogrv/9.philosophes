@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/28 16:18:24 by ngriveau          #+#    #+#             */
-/*   Updated: 2023/04/06 11:14:54 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/04/06 12:21:50 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,27 +50,39 @@ void	ft_unlock_mutex_id(t_human *human)
 void	main_end(t_philo *philo)
 {
 	int	i;
+	int wait;
+	int nb_of_eat;
 	t_human *human;
 	
 	usleep(1000);
-	i = 0;
 	human = philo->human.next;
+	wait = 8500/philo->av.nbr_philo;
+	nb_of_eat = 0;
 	while (1)
 	{
-		if ((ft_get_time() - human->timing) >= philo->av.die)
+		pthread_mutex_lock(&human->mutex_timing);
+		if (philo->av.nbr_eat <= human->nb_eat)
+			++nb_of_eat;
+		else if ((ft_get_time() - human->timing) >= philo->av.die)
 		{
+			pthread_mutex_unlock(&human->mutex_timing);
 			ft_philo_death(human, philo);
 			break ;	
 		}
+		pthread_mutex_unlock(&human->mutex_timing);
+		if (nb_of_eat == philo->av.nbr_philo)
+			break ;
 		if (human->next == NULL)
+		{
+			nb_of_eat = 0;
 			human = &philo->human;
+		}
 		human = human->next;
+		ft_usleep(philo, wait);
 	}
-	while (i < philo->av.nbr_philo)
-	{
+	i = -1;
+	while (++i < philo->av.nbr_philo)
 		pthread_join(philo->idthread[i], NULL);
-		i++;
-	}
 	ft_free_all(philo, 1);
 }
 

@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 16:05:10 by pbizien           #+#    #+#             */
-/*   Updated: 2023/04/06 11:15:18 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/04/06 11:48:40 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,7 @@ typedef struct s_human
 	int				nb_eat;
 	int				status;
 	long long		timing;
+	pthread_mutex_t	mutex_timing;
 	long long		start;
 	int				*leftfork;
 	pthread_mutex_t	*leftmutex;
@@ -88,7 +89,6 @@ typedef struct s_philo
 	pthread_mutex_t	printmutex;
 	pthread_mutex_t	endmutex;
 	pthread_t		*idthread;
-	// pthread_t		deathidthread;
 	int				deadstop;
 }				t_philo;
 

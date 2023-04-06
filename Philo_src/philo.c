@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/04 15:19:54 by ngriveau          #+#    #+#             */
-/*   Updated: 2023/04/06 11:09:01 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/04/06 12:29:27 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,14 @@
 int	ft_philo_suit(t_human *human, t_philo *philo)
 {
 	human->status = EAT;
-	human->nb_eat += 1;
 	ft_print_info(philo, human);
+	pthread_mutex_lock(&human->mutex_timing);
+	human->nb_eat += 1;
 	human->timing = ft_get_time();
 	if (philo->av.nbr_eat <= human->nb_eat || ft_usleep(philo, philo->av.eat))
-		return (ft_unlock_mutex_id(human), 1);
+		return (ft_unlock_mutex_id(human), pthread_mutex_unlock(&human->mutex_timing), 1);
 	ft_unlock_mutex_id(human);
+	pthread_mutex_unlock(&human->mutex_timing);
 	if (human->nb_eat == philo->av.nbr_eat)
 		return (1);
 	human->status = SLEEP;
@@ -36,11 +38,10 @@ int	ft_philo_suit(t_human *human, t_philo *philo)
 
 void	ft_philo_death(t_human *human, t_philo *philo)
 {
-	ft_unlock_mutex_id(human);
 	pthread_mutex_lock(&philo->printmutex);
 	if (philo->deadstop == 0)
 		printf("\e[31;1m""%lld(%lld)\t%d died\e[0m\n", (ft_get_time() - \
-philo->av.time) / 1000, (ft_get_time() - human->timing) / 1000, human->nb);
+philo->av.time) / 1000, (ft_get_time() - human->timing) / 1000, human->nb); // sup diff timing
 	pthread_mutex_lock(&philo->endmutex);
 	philo->deadstop = 1;
 	pthread_mutex_unlock(&philo->endmutex);
@@ -57,7 +58,9 @@ void	*ft_philo(void *av)
 	philo = (t_philo *) human->philo;
 	while (ft_get_time() < human->start)
 		usleep(50);
+	pthread_mutex_lock(&human->mutex_timing);
 	human->timing = ft_get_time();
+	pthread_mutex_unlock(&human->mutex_timing);
 	if (human->nb % 2 == 1)
 		usleep(100);
 	while (1)
