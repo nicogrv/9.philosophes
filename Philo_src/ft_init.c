@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/05 15:18:00 by ngriveau          #+#    #+#             */
-/*   Updated: 2023/04/06 14:00:59 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/04/11 15:36:14 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ void	ft_create_philo(t_philo *philo)
 		tmp->start = philo->av.time + 500;
 		tmp->nb_eat = 0;
 		tmp->status = THINK;
-		tmp->timing = philo->tv.tv_usec;
+		tmp->timing = philo->av.time + 500;
 		tmp->leftfork = &philo->av.fork[i - 1];
 		tmp->leftmutex = &philo->av.mutex[i - 1];
 		pthread_mutex_init(&tmp->mutex_timing, NULL);
