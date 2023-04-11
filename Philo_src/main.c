@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/28 16:18:24 by ngriveau          #+#    #+#             */
-/*   Updated: 2023/04/11 16:01:42 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/04/11 16:21:13 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,16 +17,16 @@ void	ft_lock_mutex_id(t_philo *philo, t_human *human)
 	if (human->nb % 2 == 0)
 	{
 		pthread_mutex_lock(human->leftmutex);
-		ft_print_take_fork(philo, human, 0);
+		ft_print_take_fork(philo, human);
 		pthread_mutex_lock(human->rightmutex);
-		ft_print_take_fork(philo, human, 1);
+		ft_print_take_fork(philo, human);
 	}
 	else
 	{
 		pthread_mutex_lock(human->rightmutex);
-		ft_print_take_fork(philo, human, 1);
+		ft_print_take_fork(philo, human);
 		pthread_mutex_lock(human->leftmutex);
-		ft_print_take_fork(philo, human, 0);
+		ft_print_take_fork(philo, human);
 	}
 	return ;
 }

@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 16:05:10 by pbizien           #+#    #+#             */
-/*   Updated: 2023/04/06 11:48:40 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/04/11 16:20:53 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ typedef struct s_philo
 
 //Print
 void		ft_print_info(t_philo *philo, t_human *human);
-void		ft_print_take_fork(t_philo *philo, t_human *human, int side);
+void		ft_print_take_fork(t_philo *philo, t_human *human);
 
 //main
 void		ft_create_fork(t_philo *philo);
