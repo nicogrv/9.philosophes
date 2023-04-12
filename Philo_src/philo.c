@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/04 15:19:54 by ngriveau          #+#    #+#             */
-/*   Updated: 2023/04/11 17:13:26 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/04/12 11:35:23 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,8 @@ int	ft_philo_suit(t_human *human, t_philo *philo)
 		return (1);
 	human->status = THINK;
 	ft_print_info(philo, human);
-	// if (philo->av.nbr_philo % 2 != 0  && ft_usleep(philo, (philo->av.eat + philo->av.sleep) / 2))
-	// 	return (1);
+	if (philo->av.nbr_philo % 2 != 0  && ft_usleep(philo, (philo->av.eat + philo->av.sleep) / 2))
+		return (1);
 	return (0);
 }
 
