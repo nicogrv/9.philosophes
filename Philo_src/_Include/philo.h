@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 16:05:10 by pbizien           #+#    #+#             */
-/*   Updated: 2023/04/11 16:20:53 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/04/11 16:35:15 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,7 @@ typedef struct s_init
 
 typedef struct s_philo
 {
+	int				nb_of_eat;
 	t_init			av;
 	t_human			human;
 	struct timeval	tv;

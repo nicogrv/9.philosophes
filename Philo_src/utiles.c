@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/28 16:18:24 by ngriveau          #+#    #+#             */
-/*   Updated: 2023/04/06 12:03:14 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/04/11 16:42:07 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,14 +24,19 @@ int	ft_usleep(t_philo *philo, int time)
 {
 	long long	tmp;
 
-	
 	pthread_mutex_lock(&philo->endmutex);
 	if (philo->deadstop == 1)
 		return (pthread_mutex_unlock(&philo->endmutex), 1);
 	pthread_mutex_unlock(&philo->endmutex);
 	tmp = ft_get_time();
 	while (ft_get_time() < (tmp + time))
+	{
+		pthread_mutex_lock(&philo->endmutex);
+		if (philo->deadstop == 1)
+			return (pthread_mutex_unlock(&philo->endmutex), 1);
+		pthread_mutex_unlock(&philo->endmutex);
 		usleep(50);
+	}
 	pthread_mutex_lock(&philo->endmutex);
 	if (philo->deadstop == 1)
 		return (pthread_mutex_unlock(&philo->endmutex), 1);

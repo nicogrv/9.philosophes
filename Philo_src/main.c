@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/28 16:18:24 by ngriveau          #+#    #+#             */
-/*   Updated: 2023/04/11 16:21:13 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/04/12 11:25:13 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,42 +46,42 @@ void	ft_unlock_mutex_id(t_human *human)
 	return ;
 }
 
-
-void	main_end(t_philo *philo)
+void	main_death(t_philo *philo, t_human *human)
 {
-	int	i;
-	int wait;
-	int nb_of_eat;
-	t_human *human;
-	
-	human = philo->human.next;
-	wait = 9000/philo->av.nbr_philo;
-	nb_of_eat = 0;
-	while (ft_get_time() < philo->av.time + 500)
-		usleep(50);
 	while (1)
 	{
 		pthread_mutex_lock(&human->mutex_timing);
 		if (philo->av.nbr_eat <= human->nb_eat)
-			++nb_of_eat;
-		else if ((ft_get_time() - human->timing)/1000*1000 >= philo->av.die/1000*1000)
+			philo->nb_of_eat++;
+		else if ((ft_get_time() - human->timing) / 1000 * 1000 >= \
+			philo->av.die / 1000 * 1000)
 		{
-			printf("%lld|%d\n", (ft_get_time() - human->timing)/1000*1000,  philo->av.die/1000*1000);
 			pthread_mutex_unlock(&human->mutex_timing);
 			ft_philo_death(human, philo);
-			break ;	
+			break ;
 		}
 		pthread_mutex_unlock(&human->mutex_timing);
-		if (nb_of_eat == philo->av.nbr_philo)
+		if (philo->nb_of_eat == philo->av.nbr_philo)
 			break ;
 		if (human->next == NULL)
 		{
-			nb_of_eat = 0;
+			philo->nb_of_eat = 0;
 			human = &philo->human;
 		}
 		human = human->next;
-		ft_usleep(philo, 50);
+		ft_usle1ep(philo, 50);
 	}
+}
+
+void	main_end(t_philo *philo)
+{
+	int		i;
+	t_human	*human;
+
+	human = philo->human.next;
+	while (ft_get_time() < philo->av.time + 500)
+		usleep(50);
+	main_death(philo, human);
 	i = -1;
 	while (++i < philo->av.nbr_philo)
 		pthread_join(philo->idthread[i], NULL);

@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/05 15:18:00 by ngriveau          #+#    #+#             */
-/*   Updated: 2023/04/11 15:36:14 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/04/11 16:35:44 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,7 @@ void	ft_init(t_philo *philo)
 	philo->deadstop = 0;
 	philo->human.nb = -42;
 	philo->human.status = -42;
+	philo->nb_of_eat = 0;
 	philo->human.timing = -42;
 	philo->human.leftfork = NULL;
 	philo->human.rightfork = NULL;
