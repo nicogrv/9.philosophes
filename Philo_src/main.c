@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/28 16:18:24 by ngriveau          #+#    #+#             */
-/*   Updated: 2023/04/12 11:39:03 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/04/12 12:14:42 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,12 +97,15 @@ int	main(int c, char **av)
 	if (ft_parsing(c, av, &philo))
 		return (printf(ORANGE"Number_of_philosophers | Time_to_die | Time_to_ea\
 t | Time_to_sleep | (Number_of_times_each_philosopher_must_eat)"NC"\n\n"));
-	ft_init(&philo);
+	if (ft_init(&philo))
+		return (1);
 	if (philo.av.nbr_philo == 1)
 		return (ft_one_philo(&philo), 1);
 	tmp = philo.human.next;
 	i = 0;
 	philo.idthread = malloc(sizeof(pthread_t) * philo.av.nbr_philo);
+	if (philo.idthread == NULL)
+		return (ft_free_all(&philo, 0), 1);
 	while (tmp)
 	{
 		pthread_create(&philo.idthread[i], NULL, ft_philo, tmp);

@@ -6,18 +6,22 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/05 15:18:00 by ngriveau          #+#    #+#             */
-/*   Updated: 2023/04/11 16:35:44 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/04/12 12:13:20 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./_Include/philo.h"
 
-void	ft_create_fork(t_philo *philo)
+int	ft_create_fork(t_philo *philo)
 {
 	int	i;
 
 	philo->av.mutex = malloc(sizeof(pthread_mutex_t) * philo->av.nbr_philo);
+	if (philo->av.mutex == NULL)
+		return (1);
 	philo->av.fork = malloc(sizeof(int) * (philo->av.nbr_philo + 1));
+	if (philo->av.fork == NULL)
+		return (free(philo->av.mutex), 1);
 	philo->av.fork[philo->av.nbr_philo] = -42;
 	i = -1;
 	while (++i < philo->av.nbr_philo)
@@ -25,7 +29,7 @@ void	ft_create_fork(t_philo *philo)
 		pthread_mutex_init(&philo->av.mutex[i], NULL);
 		philo->av.fork[i] = 0;
 	}
-	return ;
+	return (0);
 }
 
 void	ft_create_philo_2(t_philo *philo, t_human *tmp, int i)
@@ -43,7 +47,7 @@ void	ft_create_philo_2(t_philo *philo, t_human *tmp, int i)
 	tmp->next = NULL;
 }
 
-void	ft_create_philo(t_philo *philo)
+int	ft_create_philo(t_philo *philo)
 {
 	int		i;
 	t_human	*tmp;
@@ -54,7 +58,7 @@ void	ft_create_philo(t_philo *philo)
 	{
 		tmp->next = malloc(sizeof(t_human));
 		if (tmp->next == NULL)
-			return ;
+			return (ft_free_all(philo, 0), 1);
 		tmp = tmp->next;
 		tmp->philo = (void *) philo;
 		tmp->nb = i;
@@ -69,9 +73,10 @@ void	ft_create_philo(t_philo *philo)
 		i++;
 	}
 	tmp->next = NULL;
+	return (0);
 }
 
-void	ft_init(t_philo *philo)
+int	ft_init(t_philo *philo)
 {
 	gettimeofday(&philo->tv, NULL);
 	philo->deadstop = 0;
@@ -82,11 +87,14 @@ void	ft_init(t_philo *philo)
 	philo->human.leftfork = NULL;
 	philo->human.rightfork = NULL;
 	philo->av.time = ft_get_time();
+	if (ft_create_fork(philo))
+		return (1);
+	if (ft_create_philo(philo))
+		return (1);
 	pthread_mutex_init(&philo->printmutex, NULL);
 	pthread_mutex_init(&philo->printmutex, NULL);
 	pthread_mutex_init(&philo->endmutex, NULL);
-	ft_create_fork(philo);
-	ft_create_philo(philo);
+	return (0);
 }
 
 int	ft_parsing(int c, char **av, t_philo *philo)

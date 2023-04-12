@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 16:05:10 by pbizien           #+#    #+#             */
-/*   Updated: 2023/04/11 16:35:15 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/04/12 12:09:30 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,9 +98,9 @@ void		ft_print_info(t_philo *philo, t_human *human);
 void		ft_print_take_fork(t_philo *philo, t_human *human);
 
 //main
-void		ft_create_fork(t_philo *philo);
-void		ft_create_philo(t_philo *philo);
-void		ft_init(t_philo *philo);
+int			ft_create_fork(t_philo *philo);
+int			ft_create_philo(t_philo *philo);
+int			ft_init(t_philo *philo);
 void		ft_lock_mutex_id(t_philo *philo, t_human *human);
 void		ft_unlock_mutex_id(t_human *human);
 int			ft_usleep(t_philo *philo, int time);
