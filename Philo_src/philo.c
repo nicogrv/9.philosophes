@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/04 15:19:54 by ngriveau          #+#    #+#             */
-/*   Updated: 2023/04/12 11:47:35 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/04/12 12:04:33 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,8 @@ int	ft_philo_suit(t_human *human, t_philo *philo)
 		return (1);
 	human->status = THINK;
 	ft_print_info(philo, human);
-	if (philo->av.nbr_philo % 2 != 0 && ft_usleep(philo, (philo->av.die - philo->av.eat - philo->av.sleep) / 2))
+	if (philo->av.nbr_philo % 2 != 0 && ft_usleep(philo, (philo->av.die \
+		- philo->av.eat - philo->av.sleep) / 2))
 		return (1);
 	return (0);
 }
@@ -75,11 +76,23 @@ void	*ft_philo(void *av)
 	return (NULL);
 }
 
-void	ft_one_philo(t_philo *philo)
+void	*ft_one_philo_bis(void *av)
 {
+	t_philo	*philo;
+
+	philo = (t_philo *) av;
 	philo->av.time = ft_get_time();
 	printf("0\t"BOLD" 1 "LIGHTBLUE" has taken a fork"NC"\n");
 	ft_usleep(philo, philo->av.die);
 	printf("\e[31;1m%d\t1 died"NC"\n", philo->av.die / 1000);
+	return (NULL);
+}
+
+void	ft_one_philo(t_philo *philo)
+{
+	pthread_t	idthread;
+
+	pthread_create(&idthread, NULL, ft_one_philo_bis, philo);
+	pthread_join(idthread, NULL);
 	return (ft_free_all(philo, 0));
 }
