@@ -6,7 +6,7 @@
 /*   By: ngriveau <ngriveau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/04 15:19:54 by ngriveau          #+#    #+#             */
-/*   Updated: 2023/04/12 12:04:33 by ngriveau         ###   ########.fr       */
+/*   Updated: 2023/04/12 12:26:49 by ngriveau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ void	ft_philo_death(t_human *human, t_philo *philo)
 {
 	pthread_mutex_lock(&philo->printmutex);
 	if (philo->deadstop == 0)
-		printf("\e[31;1m""%lld\t%d died\e[0m\n", (ft_get_time() - \
+		printf("\e[31;1m""%lld %d died\e[0m\n", (ft_get_time() - \
 philo->av.time) / 1000, human->nb);
 	pthread_mutex_lock(&philo->endmutex);
 	philo->deadstop = 1;
@@ -82,9 +82,9 @@ void	*ft_one_philo_bis(void *av)
 
 	philo = (t_philo *) av;
 	philo->av.time = ft_get_time();
-	printf("0\t"BOLD" 1 "LIGHTBLUE" has taken a fork"NC"\n");
+	printf("0"BOLD" 1 "LIGHTBLUE"has taken a fork"NC"\n");
 	ft_usleep(philo, philo->av.die);
-	printf("\e[31;1m%d\t1 died"NC"\n", philo->av.die / 1000);
+	printf("\e[31;1m%d 1 died"NC"\n", philo->av.die / 1000);
 	return (NULL);
 }
 
